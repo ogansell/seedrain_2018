@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Matt Dancho" />
+
+<meta name="date" content="2017-08-03" />
+
+<title>Scaling and Modeling with tidyquant</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Scaling and Modeling with tidyquant</h1>
+<h4 class="author"><em>Matt Dancho</em></h4>
+<h4 class="date"><em>2017-08-03</em></h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#scaling-the-getting-of-financial-data">Scaling the Getting of Financial Data</a><ul>
+<li><a href="#method-1-map-a-character-vector-with-multiple-stock-symbols">Method 1: Map a character vector with multiple stock symbols</a></li>
+<li><a href="#method-2-map-a-tibble-with-stocks-in-first-column">Method 2: Map a tibble with stocks in first column</a></li>
+<li><a href="#method-3-use-purrr-to-map-a-function">Method 3: Use purrr to map a function</a></li>
+<li><a href="#method-4-compound-getters">Method 4: Compound Getters</a></li>
+</ul></li>
+<li><a href="#scaling-the-mutation-of-financial-data">Scaling the Mutation of Financial Data</a></li>
+<li><a href="#modeling-financial-data-using-purrr">Modeling Financial Data using purrr</a><ul>
+<li><a href="#example-applying-a-regression-model-to-detect-a-positive-trend">Example: Applying a Regression Model to Detect a Positive Trend</a></li>
+</ul></li>
+<li><a href="#error-handling-when-scaling">Error Handling when Scaling</a><ul>
+<li><a href="#pros-and-cons-to-built-in-error-handling">Pros and Cons to Built-In Error-Handling</a></li>
+<li><a href="#bad-apples-fail-gracefully-tq_get">Bad Apples Fail Gracefully, tq_get</a></li>
+</ul></li>
+</ul>
+</div>
+
+<blockquote>
+<p>Designed for the data science workflow of the <code>tidyverse</code></p>
+</blockquote>
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>The greatest benefit to <code>tidyquant</code> is the ability to apply the data science workflow to easily model and scale your financial analysis as described in <a href="http://r4ds.had.co.nz/"><em>R for Data Science</em></a>. Scaling is the process of creating an analysis for one asset and then extending it to multiple groups. This idea of scaling is incredibly useful to financial analysts because typically one wants to compare many assets to make informed decisions. Fortunately, the <code>tidyquant</code> package integrates with the <code>tidyverse</code> making scaling super simple!</p>
+<p>All <code>tidyquant</code> functions return data in the <code>tibble</code> (tidy data frame) format, which allows for interaction within the <code>tidyverse</code>. This means we can:</p>
+<ul>
+<li>Seamlessly scale data retrieval and mutations</li>
+<li>Use the pipe (<code>%&gt;%</code>) for chaining operations</li>
+<li>Use <code>dplyr</code> and <code>tidyr</code>: <code>select</code>, <code>filter</code>, <code>group_by</code>, <code>nest</code>/<code>unnest</code>, <code>spread</code>/<code>gather</code>, etc</li>
+<li>Use <code>purrr</code>: mapping functions with <code>map</code></li>
+<li>Model financial analysis using the data science workflow in <a href="http://r4ds.had.co.nz/"><em>R for Data Science</em></a></li>
+</ul>
+<p>We’ll go through some useful techniques for getting and manipulating groups of data.</p>
+</div>
+<div id="prerequisites" class="section level1">
+<h1>Prerequisites</h1>
+<p>Load the <code>tidyquant</code> package to get started.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Loads tidyquant, tidyverse, lubridate, xts, quantmod, TTR </span>
+<span class="kw">library</span>(tidyquant)  </code></pre></div>
+</div>
+<div id="scaling-the-getting-of-financial-data" class="section level1">
+<h1>Scaling the Getting of Financial Data</h1>
+<p>A very basic example is retrieving the stock prices for multiple stocks. There are three primary ways to do this:</p>
+<div id="method-1-map-a-character-vector-with-multiple-stock-symbols" class="section level2">
+<h2>Method 1: Map a character vector with multiple stock symbols</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="st">&quot;GOOG&quot;</span>, <span class="st">&quot;FB&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_get</span>(<span class="dt">get =</span> <span class="st">&quot;stock.prices&quot;</span>, <span class="dt">from =</span> <span class="st">&quot;2016-01-01&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;2017-01-01&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 756 x 8
+##    symbol       date    open    high     low  close   volume  adjusted
+##     &lt;chr&gt;     &lt;date&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+##  1   AAPL 2016-01-04 105.783 108.628 105.154 105.35 67649400 102.19038
+##  2   AAPL 2016-01-05 109.020 109.123 105.576 102.71 55791000  99.62955
+##  3   AAPL 2016-01-06 103.669 105.535 102.958 100.70 68457400  97.67985
+##  4   AAPL 2016-01-07 101.731 103.226  99.412  96.45 81094400  93.55730
+##  5   AAPL 2016-01-08 101.597 102.174  99.752  96.96 70798000  94.05202
+##  6   AAPL 2016-01-11 102.030 102.123 100.350  98.53 49739400  95.57493
+##  7   AAPL 2016-01-12 103.659 103.803 101.896  99.96 49154200  96.96204
+##  8   AAPL 2016-01-13 103.422 104.319 100.308  97.39 62439600  94.46912
+##  9   AAPL 2016-01-14 100.989 103.587  98.700  99.52 63170100  96.53522
+## 10   AAPL 2016-01-15  99.174 100.731  98.308  97.13 79010000  94.21691
+## # ... with 746 more rows</code></pre>
+<p>The output is a single level tibble with all or the stock prices in one tibble. The auto-generated column name is “symbol”, which can be pre-emptively renamed by giving the vector a name (e.g. <code>stocks &lt;- c(&quot;AAPL&quot;, &quot;GOOG&quot;, &quot;FB&quot;)</code>) and then piping to <code>tq_get</code>.</p>
+</div>
+<div id="method-2-map-a-tibble-with-stocks-in-first-column" class="section level2">
+<h2>Method 2: Map a tibble with stocks in first column</h2>
+<p>First, get a stock list in data frame format either by making the tibble or retrieving from <code>tq_index</code> / <code>tq_exchange</code>. The stock symbols must be in the first column.</p>
+<div id="method-2a-make-a-tibble" class="section level3">
+<h3>Method 2A: Make a tibble</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stock_list &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">stocks =</span> <span class="kw">c</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="st">&quot;JPM&quot;</span>, <span class="st">&quot;CVX&quot;</span>),
+                     <span class="dt">industry =</span> <span class="kw">c</span>(<span class="st">&quot;Technology&quot;</span>, <span class="st">&quot;Financial&quot;</span>, <span class="st">&quot;Energy&quot;</span>))
+stock_list</code></pre></div>
+<pre><code>## # A tibble: 3 x 2
+##   stocks   industry
+##    &lt;chr&gt;      &lt;chr&gt;
+## 1   AAPL Technology
+## 2    JPM  Financial
+## 3    CVX     Energy</code></pre>
+<p>Second, send the stock list to <code>tq_get</code>. Notice how the symbol and industry columns are automatically expanded the length of the stock prices.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stock_list <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_get</span>(<span class="dt">get =</span> <span class="st">&quot;stock.prices&quot;</span>, <span class="dt">from =</span> <span class="st">&quot;2016-01-01&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;2017-01-01&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 756 x 9
+##    stocks   industry       date    open    high     low  close   volume
+##     &lt;chr&gt;      &lt;chr&gt;     &lt;date&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+##  1   AAPL Technology 2016-01-04 105.783 108.628 105.154 105.35 67649400
+##  2   AAPL Technology 2016-01-05 109.020 109.123 105.576 102.71 55791000
+##  3   AAPL Technology 2016-01-06 103.669 105.535 102.958 100.70 68457400
+##  4   AAPL Technology 2016-01-07 101.731 103.226  99.412  96.45 81094400
+##  5   AAPL Technology 2016-01-08 101.597 102.174  99.752  96.96 70798000
+##  6   AAPL Technology 2016-01-11 102.030 102.123 100.350  98.53 49739400
+##  7   AAPL Technology 2016-01-12 103.659 103.803 101.896  99.96 49154200
+##  8   AAPL Technology 2016-01-13 103.422 104.319 100.308  97.39 62439600
+##  9   AAPL Technology 2016-01-14 100.989 103.587  98.700  99.52 63170100
+## 10   AAPL Technology 2016-01-15  99.174 100.731  98.308  97.13 79010000
+## # ... with 746 more rows, and 1 more variables: adjusted &lt;dbl&gt;</code></pre>
+</div>
+<div id="method-2b-use-index-or-exchange" class="section level3">
+<h3>Method 2B: Use index or exchange</h3>
+<p>Get an index…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tq_index</span>(<span class="st">&quot;DOW&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 30 x 5
+##    symbol                                     company     weight
+##     &lt;chr&gt;                                       &lt;chr&gt;      &lt;dbl&gt;
+##  1     BA                              Boeing Company 0.07401611
+##  2     GS                    Goldman Sachs Group Inc. 0.07038297
+##  3    MMM                                  3M Company 0.06389433
+##  4    UNH             UnitedHealth Group Incorporated 0.06003411
+##  5   AAPL                                  Apple Inc. 0.04887957
+##  6    MCD                      McDonald's Corporation 0.04870850
+##  7     HD                             Home Depot Inc. 0.04681416
+##  8    IBM International Business Machines Corporation 0.04493225
+##  9    JNJ                           Johnson &amp; Johnson 0.04110935
+## 10    TRV                    Travelers Companies Inc. 0.04004242
+## # ... with 20 more rows, and 2 more variables: sector &lt;chr&gt;,
+## #   shares_held &lt;dbl&gt;</code></pre>
+<p>…or, get an exchange.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tq_exchange</span>(<span class="st">&quot;NYSE&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 3,143 x 7
+##    symbol                company last.sale.price market.cap ipo.year
+##     &lt;chr&gt;                  &lt;chr&gt;           &lt;dbl&gt;      &lt;chr&gt;    &lt;dbl&gt;
+##  1    DDD 3D Systems Corporation           17.01     $1.94B       NA
+##  2    MMM             3M Company          205.41   $122.58B       NA
+##  3   WBAI        500.com Limited           11.12   $453.34M     2013
+##  4   WUBA            58.com Inc.           50.40     $7.32B     2013
+##  5    AHC  A.H. Belo Corporation            5.20      $113M       NA
+##  6   ATEN     A10 Networks, Inc.            7.06   $489.52M     2014
+##  7    AAC     AAC Holdings, Inc.            6.06   $145.88M     2014
+##  8    AIR              AAR Corp.           36.85     $1.27B       NA
+##  9    AAN     Aaron&amp;#39;s,  Inc.           45.93     $3.33B       NA
+## 10    ABB                ABB Ltd           23.61    $50.38B       NA
+## # ... with 3,133 more rows, and 2 more variables: sector &lt;chr&gt;,
+## #   industry &lt;chr&gt;</code></pre>
+<p>Send the index or exchange to <code>tq_get</code>. <em>Important Note: This can take several minutes depending on the size of the index or exchange, which is why only the first three stocks are evaluated in the vignette.</em></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tq_index</span>(<span class="st">&quot;DOW&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">slice</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_get</span>(<span class="dt">get =</span> <span class="st">&quot;stock.prices&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 7,995 x 12
+##    symbol        company     weight      sector shares_held       date
+##     &lt;chr&gt;          &lt;chr&gt;      &lt;dbl&gt;       &lt;chr&gt;       &lt;dbl&gt;     &lt;date&gt;
+##  1     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-03
+##  2     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-04
+##  3     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-05
+##  4     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-08
+##  5     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-09
+##  6     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-10
+##  7     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-11
+##  8     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-12
+##  9     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-16
+## 10     BA Boeing Company 0.07401611 Industrials     5244157 2007-01-17
+## # ... with 7,985 more rows, and 6 more variables: open &lt;dbl&gt;, high &lt;dbl&gt;,
+## #   low &lt;dbl&gt;, close &lt;dbl&gt;, volume &lt;dbl&gt;, adjusted &lt;dbl&gt;</code></pre>
+<p>You can use any applicable “getter” to get data for <strong>every stock in an index or an exchange</strong>! This includes: “stock.prices”, “key.ratios”, “key.stats”, “financials”, and more.</p>
+</div>
+</div>
+<div id="method-3-use-purrr-to-map-a-function" class="section level2">
+<h2>Method 3: Use purrr to map a function</h2>
+<p>We can pipe a tibble of stock symbols to a mutation that maps the <code>tq_get(get = &quot;stock.prices&quot;)</code> function. The result is all of the stock prices in nested format.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tibble</span>(<span class="dt">symbol =</span> <span class="kw">c</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="st">&quot;GOOG&quot;</span>, <span class="st">&quot;AMZN&quot;</span>, <span class="st">&quot;FB&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">stock.prices =</span> <span class="kw">map</span>(<span class="dt">.x =</span> symbol, <span class="op">~</span><span class="st"> </span><span class="kw">tq_get</span>(.x, <span class="dt">get =</span> <span class="st">&quot;stock.prices&quot;</span>)))</code></pre></div>
+<pre><code>## # A tibble: 4 x 2
+##   symbol         stock.prices
+##    &lt;chr&gt;               &lt;list&gt;
+## 1   AAPL &lt;tibble [2,665 x 7]&gt;
+## 2   GOOG &lt;tibble [2,665 x 7]&gt;
+## 3   AMZN &lt;tibble [2,665 x 7]&gt;
+## 4     FB &lt;tibble [1,310 x 7]&gt;</code></pre>
+</div>
+<div id="method-4-compound-getters" class="section level2">
+<h2>Method 4: Compound Getters</h2>
+<p>In financial analysis, it’s very common to need data from various sources to combine in an analysis. For this reason multiple <code>get</code> options (“compound getters”) can be used to return a “compound get”. A quick example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="st">&quot;GOOG&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_get</span>(<span class="dt">get =</span> <span class="kw">c</span>(<span class="st">&quot;stock.prices&quot;</span>, <span class="st">&quot;financials&quot;</span>))</code></pre></div>
+<pre><code>## # A tibble: 2 x 3
+##   symbol         stock.prices       financials
+##    &lt;chr&gt;               &lt;list&gt;           &lt;list&gt;
+## 1   AAPL &lt;tibble [2,665 x 7]&gt; &lt;tibble [3 x 3]&gt;
+## 2   GOOG &lt;tibble [2,665 x 7]&gt; &lt;tibble [3 x 3]&gt;</code></pre>
+<p>This returns the stock prices and financials for each stock as one nested data frame! Any of the <code>get</code> options that accept stock symbols can be used in this manner: <code>&quot;stock.prices&quot;</code>, <code>&quot;financials&quot;</code>, <code>&quot;key.ratios&quot;</code>, <code>&quot;key.stats&quot;</code>, <code>&quot;dividends&quot;</code>, and <code>&quot;splits&quot;</code>.</p>
+</div>
+</div>
+<div id="scaling-the-mutation-of-financial-data" class="section level1">
+<h1>Scaling the Mutation of Financial Data</h1>
+<p>Once you get the data, you typically want to do something with it. You can easily do this at scale. Let’s get the yearly returns for multiple stocks using <code>tq_transmute</code>. First, get the prices. We’ll use the <code>FANG</code> data set, but you typically will use <code>tq_get</code> to retrieve data in “tibble” format.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;FANG&quot;</span>)
+FANG</code></pre></div>
+<pre><code>## # A tibble: 4,032 x 8
+##    symbol       date  open  high   low close    volume adjusted
+##     &lt;chr&gt;     &lt;date&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1     FB 2013-01-02 27.44 28.18 27.42 28.00  69846400    28.00
+##  2     FB 2013-01-03 27.88 28.47 27.59 27.77  63140600    27.77
+##  3     FB 2013-01-04 28.01 28.93 27.83 28.76  72715400    28.76
+##  4     FB 2013-01-07 28.69 29.79 28.65 29.42  83781800    29.42
+##  5     FB 2013-01-08 29.51 29.60 28.86 29.06  45871300    29.06
+##  6     FB 2013-01-09 29.67 30.60 29.49 30.59 104787700    30.59
+##  7     FB 2013-01-10 30.60 31.45 30.28 31.30  95316400    31.30
+##  8     FB 2013-01-11 31.28 31.96 31.10 31.72  89598000    31.72
+##  9     FB 2013-01-14 32.08 32.21 30.62 30.95  98892800    30.95
+## 10     FB 2013-01-15 30.64 31.71 29.88 30.10 173242600    30.10
+## # ... with 4,022 more rows</code></pre>
+<p>Second, use <code>group_by</code> to group by stock symbol. Third, apply the mutation. We can do this in one easy workflow. The <code>periodReturns</code> function is applied to each group of stock prices, and a new data frame was returned with the annual returns in the correct periodicity.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">FANG_returns_yearly &lt;-<span class="st"> </span>FANG <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">group_by</span>(symbol) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_transmute</span>(<span class="dt">select     =</span> adjusted, 
+                 <span class="dt">mutate_fun =</span> periodReturn, 
+                 <span class="dt">period     =</span> <span class="st">&quot;yearly&quot;</span>, 
+                 <span class="dt">col_rename =</span> <span class="st">&quot;yearly.returns&quot;</span>) </code></pre></div>
+<p>Last, we can visualize the returns.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">FANG_returns_yearly <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">year</span>(date), <span class="dt">y =</span> yearly.returns, <span class="dt">fill =</span> symbol)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_bar</span>(<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;FANG: Annual Returns&quot;</span>, 
+         <span class="dt">subtitle =</span> <span class="st">&quot;Mutating at scale is quick and easy!&quot;</span>,
+         <span class="dt">y =</span> <span class="st">&quot;Returns&quot;</span>, <span class="dt">x =</span> <span class="st">&quot;&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">scale_y_continuous</span>(<span class="dt">labels =</span> scales<span class="op">::</span>percent) <span class="op">+</span>
+<span class="st">    </span><span class="kw">theme_tq</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">scale_fill_tq</span>()</code></pre></div>
+<p><img src="data:image/png;base64,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" width="95%" style="display: block; margin: auto;" /></p>
+<p><a class="anchor" id="purrr-function-mapping"></a></p>
+</div>
+<div id="modeling-financial-data-using-purrr" class="section level1">
+<h1>Modeling Financial Data using purrr</h1>
+<p>Eventually you will want to begin modeling (or more generally applying functions) at scale! One of the <strong>best</strong> features of the <code>tidyverse</code> is the ability to map functions to nested tibbles using <code>purrr</code>. From the Many Models chapter of “<a href="http://r4ds.had.co.nz/">R for Data Science</a>”, we can apply the same modeling workflow to financial analysis. Using a two step workflow:</p>
+<ol style="list-style-type: decimal">
+<li>Model a single stock</li>
+<li>Scale to many stocks</li>
+</ol>
+<p>Let’s go through an example to illustrate.</p>
+<div id="example-applying-a-regression-model-to-detect-a-positive-trend" class="section level2">
+<h2>Example: Applying a Regression Model to Detect a Positive Trend</h2>
+<p>In this example, we’ll use a simple linear model to identify the trend in annual returns to determine if the stock returns are decreasing or increasing over time.</p>
+<div id="analyze-a-single-stock" class="section level3">
+<h3>Analyze a Single Stock</h3>
+<p>First, let’s come up with a function to help us collect annual log returns. The function below performs three operations internally. It first gets the stock prices using <code>tq_get()</code>. Then, it mutates the stock prices to period returns using <code>tq_transmute()</code>. We add the <code>type = &quot;log&quot;</code> and <code>period = &quot;monthly&quot;</code> arguments to ensure we retrieve a tibble of monthly log returns. Last, we take the mean of the monthly returns to get MMLR.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">get_annual_returns &lt;-<span class="st"> </span><span class="cf">function</span>(stock.symbol) {
+    stock.symbol <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw">tq_get</span>(<span class="dt">get  =</span> <span class="st">&quot;stock.prices&quot;</span>,
+               <span class="dt">from =</span> <span class="st">&quot;2007-01-01&quot;</span>,
+               <span class="dt">to   =</span> <span class="st">&quot;2016-12-31&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw">tq_transmute</span>(<span class="dt">select     =</span> adjusted, 
+                     <span class="dt">mutate_fun =</span> periodReturn, 
+                     <span class="dt">type       =</span> <span class="st">&quot;log&quot;</span>, 
+                     <span class="dt">period     =</span> <span class="st">&quot;yearly&quot;</span>)
+}</code></pre></div>
+<p>Let’s test <code>get_annual_returns</code> out. We now have the annual log returns over the past ten years.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">AAPL_annual_log_returns &lt;-<span class="st"> </span><span class="kw">get_annual_returns</span>(<span class="st">&quot;AAPL&quot;</span>)
+AAPL_annual_log_returns</code></pre></div>
+<pre><code>## # A tibble: 10 x 2
+##          date yearly.returns
+##        &lt;date&gt;          &lt;dbl&gt;
+##  1 2007-12-31     0.86023791
+##  2 2008-12-31    -0.84191019
+##  3 2009-12-31     0.90381706
+##  4 2010-12-31     0.42571145
+##  5 2011-12-30     0.22759782
+##  6 2012-12-31     0.28191703
+##  7 2013-12-31     0.07760429
+##  8 2014-12-31     0.34090871
+##  9 2015-12-31    -0.03060048
+## 10 2016-12-30     0.11760900</code></pre>
+<p>Let’s visualize to identify trends. We can see from the linear trend line that AAPL’s stock returns are declining.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">AAPL_annual_log_returns <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">year</span>(date), <span class="dt">y =</span> yearly.returns)) <span class="op">+</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="kw">palette_light</span>()[[<span class="dv">1</span>]]) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="kw">palette_light</span>()[[<span class="dv">3</span>]]) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="dv">1</span>, <span class="dt">color =</span> <span class="kw">palette_light</span>()[[<span class="dv">3</span>]]) <span class="op">+</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;AAPL: Visualizing Trends in Annual Returns&quot;</span>,
+         <span class="dt">x =</span> <span class="st">&quot;&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Annual Returns&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">theme_tq</span>()</code></pre></div>
+<p><img src="data:image/png;base64,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" width="95%" style="display: block; margin: auto;" /></p>
+<p>Now, we can get the linear model using the <code>lm()</code> function. However, there is one problem: the output is not “tidy”.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span><span class="kw">lm</span>(yearly.returns <span class="op">~</span><span class="st"> </span><span class="kw">year</span>(date), <span class="dt">data =</span> AAPL_annual_log_returns)
+mod</code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = yearly.returns ~ year(date), data = AAPL_annual_log_returns)
+## 
+## Coefficients:
+## (Intercept)   year(date)  
+##    58.86281     -0.02915</code></pre>
+<p>We can utilize the <code>broom</code> package to get “tidy” data from the model. There’s three primary functions:</p>
+<ol style="list-style-type: decimal">
+<li><code>augment</code>: adds columns to the original data such as predictions, residuals and cluster assignments</li>
+<li><code>glance</code>: provides a one-row summary of model-level statistics</li>
+<li><code>tidy</code>: summarizes a model’s statistical findings such as coefficients of a regression</li>
+</ol>
+<p>We’ll use <code>tidy</code> to retrieve the model coefficients.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(broom)
+<span class="kw">tidy</span>(mod)</code></pre></div>
+<pre><code>##          term    estimate    std.error  statistic   p.value
+## 1 (Intercept) 58.86281346 113.10732941  0.5204156 0.6168657
+## 2  year(date) -0.02914567   0.05623028 -0.5183270 0.6182571</code></pre>
+<p>Adding to our workflow, we have the following:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">get_model &lt;-<span class="st"> </span><span class="cf">function</span>(stock.symbol) {
+    annual_returns &lt;-<span class="st"> </span><span class="kw">get_annual_returns</span>(stock.symbol)
+    mod &lt;-<span class="st"> </span><span class="kw">lm</span>(yearly.returns <span class="op">~</span><span class="st"> </span><span class="kw">year</span>(date), <span class="dt">data =</span> annual_returns)
+    <span class="kw">tidy</span>(mod)
+}</code></pre></div>
+<p>Testing it out on a single stock. We can see that the “term” that contains the direction of the trend (the slope) is “year(date)”. The interpetation is that as year increases one unit, the annual returns decrease by 3%.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">get_model</span>(<span class="st">&quot;AAPL&quot;</span>)</code></pre></div>
+<pre><code>##          term    estimate    std.error  statistic   p.value
+## 1 (Intercept) 58.86281346 113.10732941  0.5204156 0.6168657
+## 2  year(date) -0.02914567   0.05623028 -0.5183270 0.6182571</code></pre>
+<p>Now that we have identified the trend direction, it looks like we are ready to scale.</p>
+</div>
+<div id="scale-to-many-stocks" class="section level3">
+<h3>Scale to Many Stocks</h3>
+<p>Once the analysis for one stock is done scale to many stocks is simple. For brevity, we’ll randomly sample ten stocks from the S&amp;P500 with a call to <code>dplyr::sample_n()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">10</span>)
+stocks &lt;-<span class="st"> </span><span class="kw">tq_index</span>(<span class="st">&quot;SP500&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">sample_n</span>(<span class="dv">5</span>)
+stocks</code></pre></div>
+<pre><code>## # A tibble: 5 x 5
+##   symbol                           company       weight
+##    &lt;chr&gt;                             &lt;chr&gt;        &lt;dbl&gt;
+## 1     DG        Dollar General Corporation 0.0008937877
+## 2    STZ Constellation Brands Inc. Class A 0.0015736162
+## 3    ZBH       Zimmer Biomet Holdings Inc. 0.0011148646
+## 4    HLT     Hilton Worldwide Holdings Inc 0.0005953980
+## 5   CELG               Celgene Corporation 0.0049637888
+## # ... with 2 more variables: sector &lt;chr&gt;, shares_held &lt;dbl&gt;</code></pre>
+<p>We can now apply our analysis function to the stocks using <code>dplyr::mutate</code> and <code>purrr::map</code>. The <code>mutate()</code> function adds a column to our tibble, and the <code>map()</code> function maps our custom <code>get_model</code> function to our tibble of stocks using the <code>symbol</code> column. The <code>tidyr::unnest</code> function unrolls the nested data frame so all of the model statistics are accessable in the top data frame level. The <code>filter</code>, <code>arrange</code> and <code>select</code> steps just manipulate the data frame to isolate and arrange the data for our viewing.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stocks_model_stats &lt;-<span class="st"> </span>stocks <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">model =</span> <span class="kw">map</span>(symbol, get_model)) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">filter</span>(term <span class="op">==</span><span class="st"> &quot;year(date)&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">arrange</span>(<span class="kw">desc</span>(estimate)) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">select</span>(<span class="op">-</span>term)
+stocks_model_stats</code></pre></div>
+<pre><code>## # A tibble: 5 x 9
+##   symbol                           company       weight
+##    &lt;chr&gt;                             &lt;chr&gt;        &lt;dbl&gt;
+## 1    STZ Constellation Brands Inc. Class A 0.0015736162
+## 2    ZBH       Zimmer Biomet Holdings Inc. 0.0011148646
+## 3    HLT     Hilton Worldwide Holdings Inc 0.0005953980
+## 4   CELG               Celgene Corporation 0.0049637888
+## 5     DG        Dollar General Corporation 0.0008937877
+## # ... with 6 more variables: sector &lt;chr&gt;, shares_held &lt;dbl&gt;,
+## #   estimate &lt;dbl&gt;, std.error &lt;dbl&gt;, statistic &lt;dbl&gt;, p.value &lt;dbl&gt;</code></pre>
+<p>We’re done! We now have the coefficient of the linear regression that tracks the direction of the trend line. We can easily extend this type of analysis to larger lists or stock indexes. For example, the entire S&amp;P500 could be analyzed removing the <code>sample_n()</code> following the call to <code>tq_index(&quot;SP500&quot;)</code>.</p>
+</div>
+</div>
+</div>
+<div id="error-handling-when-scaling" class="section level1">
+<h1>Error Handling when Scaling</h1>
+<p>Eventually you will run into a stock index, stock symbol, FRED data code, etc that cannot be retrieved. Possible reasons are:</p>
+<ul>
+<li>An index becomes out of date</li>
+<li>A company goes private</li>
+<li>A stock ticker symbol changes</li>
+<li>Yahoo / FRED just doesn’t like your stock symbol / FRED code</li>
+</ul>
+<p>This becomes painful when scaling if the functions return errors. So, the <code>tq_get()</code> function is designed to handle errors <em>gracefully</em>. What this means is an <code>NA</code> value is returned when an error is generated along with a <em>gentle error warning</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tq_get</span>(<span class="st">&quot;XYZ&quot;</span>, <span class="st">&quot;stock.prices&quot;</span>)</code></pre></div>
+<pre><code>## [1] NA</code></pre>
+<div id="pros-and-cons-to-built-in-error-handling" class="section level2">
+<h2>Pros and Cons to Built-In Error-Handling</h2>
+<p>There are pros and cons to this approach that you may not agree with, but I believe helps in the long run. Just be aware of what happens:</p>
+<ul>
+<li><p><strong>Pros</strong>: Long running scripts are not interrupted because of one error</p></li>
+<li><p><strong>Cons</strong>: Errors can be inadvertently handled or flow downstream if the users does not read the warnings</p></li>
+</ul>
+</div>
+<div id="bad-apples-fail-gracefully-tq_get" class="section level2">
+<h2>Bad Apples Fail Gracefully, tq_get</h2>
+<p>Let’s see an example when using <code>tq_get()</code> to get the stock prices for a long list of stocks with one <code>BAD APPLE</code>. The argument <code>complete_cases</code> comes in handy. The default is <code>TRUE</code>, which removes “bad apples” so future analysis have complete cases to compute on. Note that a gentle warning stating that an error occurred and was dealt with by removing the rows from the results.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="st">&quot;GOOG&quot;</span>, <span class="st">&quot;BAD APPLE&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_get</span>(<span class="dt">get =</span> <span class="st">&quot;stock.prices&quot;</span>, <span class="dt">complete_cases =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## Warning: x = 'BAD APPLE', get = 'stock.prices': Error: BAD APPLE download failed after two attempts. Error message:
+## HTTP error 400.
+##  Removing BAD APPLE.</code></pre>
+<pre><code>## # A tibble: 5,330 x 8
+##    symbol       date   open   high    low    close    volume adjusted
+##     &lt;chr&gt;     &lt;date&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1   AAPL 2007-01-03 13.648 13.694 12.954 11.97143 309579900 10.81246
+##  2   AAPL 2007-01-04 13.294 13.595 13.258 12.23714 211815100 11.05245
+##  3   AAPL 2007-01-05 13.566 13.634 13.350 12.15000 208685400 10.97374
+##  4   AAPL 2007-01-08 13.596 13.686 13.489 12.21000 199276700 11.02793
+##  5   AAPL 2007-01-09 13.674 14.707 13.468 13.22429 837324600 11.94403
+##  6   AAPL 2007-01-10 14.987 15.469 14.781 13.85714 738220000 12.51562
+##  7   AAPL 2007-01-11 15.175 15.308 15.042 13.68572 360063200 12.36079
+##  8   AAPL 2007-01-12 14.961 15.036 14.746 13.51714 328172600 12.20853
+##  9   AAPL 2007-01-16 15.134 15.382 15.097 13.87143 311019100 12.52852
+## 10   AAPL 2007-01-17 15.431 15.437 14.998 13.56428 411565000 12.25111
+## # ... with 5,320 more rows</code></pre>
+<p>Now switching <code>complete_cases = FALSE</code> will retain any errors as <code>NA</code> values in a nested data frame. Notice that the error message and output change. The error message now states that the <code>NA</code> values exist in the output and the return is a “nested” data structure.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="st">&quot;GOOG&quot;</span>, <span class="st">&quot;BAD APPLE&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_get</span>(<span class="dt">get =</span> <span class="st">&quot;stock.prices&quot;</span>, <span class="dt">complete_cases =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## Warning: x = 'BAD APPLE', get = 'stock.prices': Error: BAD APPLE download failed after two attempts. Error message:
+## HTTP error 400.</code></pre>
+<pre><code>## Warning in value[[3L]](cond): Returning as nested data frame.</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##      symbol         stock.prices
+##       &lt;chr&gt;               &lt;list&gt;
+## 1      AAPL &lt;tibble [2,665 x 7]&gt;
+## 2      GOOG &lt;tibble [2,665 x 7]&gt;
+## 3 BAD APPLE            &lt;lgl [1]&gt;</code></pre>
+<p>In both cases, the prudent user will review the warnings to determine what happened and whether or not this is acceptable. In the <code>complete_cases = FALSE</code> example, if the user attempts to perform downstream computations at scale, the computations will likely fail grinding the analysis to a hault. But, the advantage is that the user will more easily be able to filter to the problem childs to determine what happened and decide whether this is acceptable or not.</p>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

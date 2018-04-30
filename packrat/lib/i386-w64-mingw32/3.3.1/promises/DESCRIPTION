@@ -1,0 +1,35 @@
+Package: promises
+Type: Package
+Title: Abstractions for Promise-Based Asynchronous Programming
+Version: 1.0.1
+Authors@R: c( person("Joe", "Cheng", email = "joe@rstudio.com", role =
+    c("aut", "cre")), person("RStudio", role = c("cph", "fnd")) )
+Description: Provides fundamental abstractions for doing asynchronous
+    programming in R using promises. Asynchronous programming is useful
+    for allowing a single R process to orchestrate multiple tasks in
+    the background while also attending to something else. Semantics
+    are similar to 'JavaScript' promises, but with a syntax that is
+    idiomatic R.
+License: MIT + file LICENSE
+Imports: R6, Rcpp, later, rlang, stats, magrittr
+Suggests: testthat, future, knitr, rmarkdown
+LinkingTo: later, Rcpp
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.0.1
+Encoding: UTF-8
+LazyData: true
+VignetteBuilder: knitr
+URL: https://rstudio.github.io/promises,
+    https://github.com/rstudio/promises
+BugReports: https://github.com/rstudio/promises/issues
+GithubRepo: promises
+GithubUsername: rstudio
+GithubRef: master
+GithubSHA1: afe9e8f84d9903fb4cc0bae5119300e8b3359b80
+Author: Joe Cheng [aut, cre], RStudio [cph]
+Maintainer: Joe Cheng <joe@rstudio.com>
+Built: R 3.3.1; i386-w64-mingw32; 2018-04-29 21:18:15 UTC; windows
+Archs: i386
+InstallAgent: packrat 0.4.8.1
+InstallSource: github
+Hash: 56988eed627f789d62bf45ff4d1164aa

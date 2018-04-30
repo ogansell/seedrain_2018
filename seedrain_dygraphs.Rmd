@@ -1,0 +1,356 @@
+---
+output:
+  #bookdown::word_document2: #Use this if you need to output into word. The word document will contain webshots of any html/javascript content
+  bookdown::html_document2:
+    css: http://www.doc.govt.nz/themes/2014/css/2014.min.css
+    highlight: null
+    keep_md: yes
+    self_contained: no #Controls whether document has dependencies or not. Has implications for file size and speed of loading
+    number_sections: false #specify whether or not to add numbered sections
+#bibliography: references.bib
+csl: http://www.doc.govt.nz/system/reporting/elsevier-harvard.csl 
+runtime: shiny
+---
+<!-- <script language="JavaScript" src="iframeResizer.contentWindow.min.js"></script> -->
+
+```{r setupapp, warning=FALSE, echo=FALSE, message=FALSE}
+
+library(shiny)
+library(dplyr)
+library(shinyjs)
+library(dygraphs)
+#library(plotly)
+#library(leaflet)
+
+
+source("shiny_extras.R")
+#source("dygraph-extra-shiny.R")
+
+#tags$head(tags$script(src = "dygraph-extra.js"))
+
+
+useShinyjs(rmd = TRUE)
+
+load("seeddata.RData")
+
+```
+
+
+<!--Customise header here-->
+<style>
+.h1sub {
+    color: #575757;
+    text-align: center;
+    font-weight: normal;
+    display: block;
+}
+
+@media print {
+.h1sub {
+        top: -500px;
+        color: #575757;
+        text-align: center;
+        font-weight: normal;
+        display: block;
+    }
+    
+.no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
+
+.dygraph-title {
+  color: black;
+  font-weight: normal;
+  font-family: Archer;
+}
+.dygraph-axis-label {
+  font-size: 11px;
+  font-family: Archer;
+}
+
+.dygraph-label.dygraph-ylabel {
+  font-size: 18px;
+  font-family: Archer;
+}
+
+.dygraph-legend {
+  font-weight: normal;
+  font-size: 11px;
+  font-family: Archer;
+}
+
+.shiny-output-error {
+  visibility: hidden;
+  }
+
+.shiny-output-error:before {
+  visibility: hidden;
+}
+
+
+</style>
+
+<!-- <header> -->
+<!-- <img src="http://www.doc.govt.nz//themes/2014/images/doc-logo-black-and-white.png" width="150" height="26" class="printonly printlogo" alt=""> -->
+
+<!-- <h1 class="printonly"> Test shiny app </h1> -->
+<!-- </header> -->
+<!--This sets up the page to be a tabbed layout-->
+##{.tabset .tabset-fade}  
+
+DOC counts seed numbers of canopy tree species at approximately 70 sites around the country. This information helps to confirm if a mast event is going to occur in sites dominated by beech or rimu trees.
+
+Data from these sites is entered into a database which makes it easy to tell what is happening with seed numbers at all of these sites.
+
+You can use this application to explore the data from the sites where seed numbers of canopy tree species are counted. It is possible to look at trends over time in individual sites or to look at trends within a year across multiple sites.
+
+The interactive map shows where in New Zealand the monitoring sites are and if seed numbers in beech forest monitoring sites are high or low.
+
+### Explore data across sites
+
+
+```{r user input, echo=FALSE, warning=FALSE, message=FALSE}
+
+fluidRow(column(3,
+  div(id = "Sites",selectInput("Sites",h5("Select seed rain monitoring sites:"), 
+              choices = seeds$MonitoringPlace,selected=TRUE, multiple = TRUE),
+  
+  actionButton("resetSites", "Reset Site selection"),class="no-print"),
+  
+  div(id = "graphlegend",
+      h5("Monitoring sites"),
+  textOutput("legendDivID"))), 
+
+column(9,
+div(id = "mainpanel",
+dygraphOutput("allbeech" , height = "350px"),
+uiOutput("rb"),
+uiOutput("sb"),
+uiOutput("hb"),
+uiOutput("bb"),
+uiOutput("mb")
+)))
+
+
+  observeEvent(input$resetSites, {
+    shinyjs::reset("Sites")
+    })
+
+  observeEvent(input$resetSites, {
+  # Change the following line for more examples
+  shinyjs::hide("graphlegend")
+  })
+  
+  observeEvent(input$Sites, {
+  # Change the following line for more examples
+  shinyjs::show("graphlegend")
+  })
+  
+  observeEvent(input$resetSites, {
+  # Change the following line for more examples
+  shinyjs::hide("mainpanel")
+  })
+  
+  observeEvent(input$Sites, {
+  # Change the following line for more examples
+  shinyjs::show("mainpanel")
+  })
+  
+
+
+  
+
+```
+
+
+```{r reactive functions, warning=FALSE, message=FALSE, echo=FALSE}
+
+library(tidyquant)
+library(tidyr)
+    
+#Reactive event with xts conversion
+allbeech <- reactive({
+  # validate(
+  #   need(input$Sites != "", "Please select a site(s) to display the graph")
+  #   )#Replaces error message associated with no year being selected
+    a <-dplyr::filter(seeds_ab, as.character(seeds_ab$MonitoringPlace) %in% input$Sites)
+    #a <-droplevels(a)
+    t <-tidyr::spread(a, MonitoringPlace,CumSum_Year)
+    # t[is.na(t)] <- 0
+    # t[t == 0] <- NA
+    t <-tidyquant::as_xts(t, date_col = DateCollected)
+     })
+
+#Red beech reactive event with xts conversion
+redbeech <- reactive({
+  # validate(
+  #   need(input$Sites != "", "")
+  #   )#Replaces error message associated with no year being selected
+    a <-subset(seeds_rb, as.character(seeds_rb$MonitoringPlace) %in% input$Sites)
+    a <-droplevels(a)
+    t <-tidyr::spread(a, MonitoringPlace,CumSum_Year)
+    # t[is.na(t)] <- 0
+    # t[t == 0] <- NA
+    t <-tidyquant::as_xts(t, date_col = DateCollected)
+     })
+
+#Silver beech reactive event with xts conversion
+silverbeech <- reactive({
+  # validate(
+  #   need(input$Sites != "", "")
+  #   )#Replaces error message associated with no year being selected
+    a <-dplyr::filter(seeds_sb, as.character(seeds_sb$MonitoringPlace) %in% input$Sites)
+    #a <-droplevels(a)
+    t <-tidyr::spread(a, MonitoringPlace,CumSum_Year)
+    # t[is.na(t)] <- 0
+    # t[t == 0] <- NA
+    t <-tidyquant::as_xts(t, date_col = DateCollected)
+     })
+
+#Mountain beech reactive event with xts conversion
+mountainbeech <- reactive({
+  # validate(
+  #   need(input$Sites != "", "")
+  #   )#Replaces error message associated with no year being selected
+    a <-dplyr::filter(seeds_mb, as.character(seeds_mb$MonitoringPlace) %in% input$Sites)
+    #a <-droplevels(a)
+    t <-tidyr::spread(a, MonitoringPlace,CumSum_Year)
+    # t[is.na(t)] <- 0
+    # t[t == 0] <- NA
+    t <-tidyquant::as_xts(t, date_col = DateCollected)
+     })
+
+#Black beech reactive event with xts conversion
+blackbeech <- reactive({
+  # validate(
+  #   need(input$Sites != "", "")
+  #   )#Replaces error message associated with no year being selected
+    a <-dplyr::filter(seeds_bb, as.character(seeds_bb$MonitoringPlace) %in% input$Sites)
+    #a <-droplevels(a)
+    t <-tidyr::spread(a, MonitoringPlace,CumSum_Year)
+    # t[is.na(t)] <- 0
+    # t[t == 0] <- NA
+    t <-tidyquant::as_xts(t, date_col = DateCollected)
+     })
+
+#Black beech reactive event with xts conversion
+hardbeech <- reactive({
+  # validate(
+  #   need(input$Sites != "", "")
+  #   )#Replaces error message associated with no year being selected
+    a <-dplyr::filter(seeds_hb, as.character(seeds_hb$MonitoringPlace) %in% input$Sites)
+    #a <-droplevels(a)
+    t <-tidyr::spread(a, MonitoringPlace,CumSum_Year)
+    # t[is.na(t)] <- 0
+    # t[t == 0] <- NA
+    t <-tidyquant::as_xts(t, date_col = DateCollected)
+     })
+
+```
+
+
+```{r graph output, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+library(mondate)
+
+    output$allbeech <- renderDygraph({
+    allbeech <-allbeech()
+  dygraph(allbeech, group = "trees", main = "All beech species combined")%>%
+    dyRangeSelector(dateWindow = c(paste0(mondate::mondate(Sys.Date()) - 6), paste0(Sys.Date())))%>%
+    dyLegend(show = "always", labelsSeparateLines = TRUE, labelsDiv = "legendDivID")%>%
+    dyAxis("y", label = "Cumulative sum seeds/m<sup>2</sup>")%>%
+    dyUnzoom()%>%
+    dyOptions(drawPoints = TRUE, pointSize = 5, strokeWidth = 3)%>%
+    dyOptions(connectSeparatedPoints = TRUE)%>%
+    dyRangeSelector(dateWindow = c(paste0(mondate::mondate(Sys.Date()) - 6), paste0(Sys.Date())))%>%
+    dyCrosshair(direction = "vertical")
+    
+  })
+
+  output$redbeech <- renderDygraph({
+  redbeech <-redbeech()
+  dygraph(redbeech, group = "trees", main = "Red beech")%>%
+    dyLegend(dygraph, show = "follow")%>%
+    dyAxis("y", label = "Cumulative sum seeds/m<sup>2</sup>")%>%
+     dyOptions(drawPoints = TRUE, pointSize = 5, strokeWidth = 3)%>%
+    dyOptions(connectSeparatedPoints = TRUE)%>%
+    dyCrosshair(direction = "vertical")
+  })
+  
+  output$silverbeech <- renderDygraph({
+  silverbeech <-silverbeech()
+  dygraph(silverbeech, group = "trees", main = "Silver beech")%>%
+    dyLegend(dygraph, show = "follow")%>%
+    dyAxis("y", label = "Cumulative sum seeds/m<sup>2</sup>")%>%
+     dyOptions(drawPoints = TRUE, pointSize = 5, strokeWidth = 3)%>%
+    dyOptions(pointSize = 10)%>%
+    dyOptions(connectSeparatedPoints = TRUE)%>%
+    dyCrosshair(direction = "vertical")
+  })
+
+  output$mountainbeech <- renderDygraph({
+  mountainbeech <-mountainbeech()
+  dygraph(mountainbeech, group = "trees", main = "Mountain beech")%>%
+    dyLegend(dygraph, show = "follow")%>%
+    dyAxis("y", label = "Cumulative sum seeds/m<sup>2</sup>")%>%
+     dyOptions(drawPoints = TRUE, pointSize = 5, strokeWidth = 3)%>%
+    dyOptions(connectSeparatedPoints = TRUE)%>%
+    dyCrosshair(direction = "vertical")
+  })  
+
+  output$blackbeech <- renderDygraph({
+  blackbeech <-blackbeech()
+  dygraph(blackbeech, group = "trees", main = "Black beech")%>%
+    dyLegend(dygraph, show = "follow")%>%
+    dyAxis("y", label = "Cumulative sum seeds/m<sup>2</sup>")%>%
+     dyOptions(drawPoints = TRUE, pointSize = 5, strokeWidth = 3)%>%
+    dyOptions(connectSeparatedPoints = TRUE)%>%
+    dyCrosshair(direction = "vertical")
+    })  
+  
+  output$hardbeech <- renderDygraph({
+  hardbeech <-hardbeech()
+  dygraph(hardbeech, group = "trees", main = "Hard beech")%>%
+    dyLegend(dygraph, show = "follow")%>%
+    dyAxis("y", label = "Cumulative sum seeds/m<sup>2</sup>")%>%
+     dyOptions(drawPoints = TRUE, pointSize = 5, strokeWidth = 3)%>%
+    dyOptions(connectSeparatedPoints = TRUE)%>%
+    dyCrosshair(direction = "vertical")
+  })  
+
+  
+output$rb<-renderUI({
+  if(nrow(redbeech())>0){
+    dygraphOutput("redbeech", height = "250px")
+  } else NULL
+})
+output$sb<-renderUI({
+  if(nrow(silverbeech())>0){
+    dygraphOutput("silverbeech", height = "250px")
+  } else NULL
+})
+output$hb<-renderUI({
+  if(nrow(hardbeech())>0){
+    dygraphOutput("hardbeech", height = "250px")
+  } else NULL
+})
+output$bb<-renderUI({
+  if(nrow(blackbeech())>0){
+    dygraphOutput("blackbeech", height = "250px")
+  } else NULL
+})
+output$mb<-renderUI({
+  if(nrow(mountainbeech())>0){
+    dygraphOutput("mountainbeech", height = "250px")
+  } else NULL
+})
+
+```
+
+###Interactive map
+
+ 
+

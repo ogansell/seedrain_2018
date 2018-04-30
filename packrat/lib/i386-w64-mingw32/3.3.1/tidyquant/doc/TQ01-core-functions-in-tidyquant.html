@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Matt Dancho" />
+
+<meta name="date" content="2017-08-03" />
+
+<title>Core Functions in tidyquant</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Core Functions in tidyquant</h1>
+<h4 class="author"><em>Matt Dancho</em></h4>
+<h4 class="date"><em>2017-08-03</em></h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#retrieve-consolidated-symbol-data">Retrieve Consolidated Symbol Data</a><ul>
+<li><a href="#stock-indexes">Stock Indexes</a></li>
+<li><a href="#stock-exchanges">Stock Exchanges</a></li>
+</ul></li>
+<li><a href="#get-quantitative-data">Get Quantitative Data</a><ul>
+<li><a href="#stock-prices-dividends-and-splits">Stock Prices, Dividends and Splits</a></li>
+<li><a href="#financial-statements">Financial Statements</a></li>
+<li><a href="#key-ratios-key-stats">Key Ratios &amp; Key Stats</a></li>
+<li><a href="#quandl">Quandl</a></li>
+<li><a href="#economic-data">Economic Data</a></li>
+<li><a href="#exchange-rates">Exchange Rates</a></li>
+<li><a href="#metal-prices">Metal Prices</a></li>
+</ul></li>
+<li><a href="#mutate-quantitative-data">Mutate Quantitative Data</a><ul>
+<li><a href="#transmute-quantitative-data-tq_transmute">Transmute Quantitative Data, tq_transmute</a></li>
+<li><a href="#mutate-quantitative-data-tq_mutate">Mutate Quantitative Data, tq_mutate</a></li>
+<li><a href="#xy-variants-tq_mutate_xy-and-tq_transmute_xy">_xy Variants, tq_mutate_xy and tq_transmute_xy</a></li>
+</ul></li>
+</ul>
+</div>
+
+<blockquote>
+<p>A few core functions with a lot of power</p>
+</blockquote>
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>The <code>tidyquant</code> package has a <strong>core functions with a lot of power</strong>. Few functions means less of a learning curve for the user, which is why there are only a handful of functions the user needs to learn to perform the vast majority of financial analysis tasks. The main functions are:</p>
+<ul>
+<li><p><strong>Get a Stock Index, <code>tq_index()</code>, or a Stock Exchange, <code>tq_exchange()</code></strong>: Returns the stock symbols and various attributes for every stock in an index or exchange. Eighteen indexes and three exchanges are available.</p></li>
+<li><p><strong>Get Quantitative Data, <code>tq_get()</code></strong>: A one-stop shop to get data from various web-sources.</p></li>
+<li><p><strong>Transmute, <code>tq_transmute()</code>, and Mutate, <code>tq_mutate()</code>, Quantitative Data</strong>: Perform and scale financial calculations completely within the <code>tidyverse</code>. These workhorse functions integrate the <code>xts</code>, <code>zoo</code>, <code>quantmod</code>, and <code>TTR</code> packages.</p></li>
+<li><p><strong>Performance analysis, <code>tq_performance()</code>, and portfolio aggregation, <code>tq_portfolio()</code></strong>: The <code>PerformanceAnalytics</code> integration enables analyzing performance of assets and portfolios. Because of the breadth of this topic, refer to <a href="TQ05-performance-analysis-with-tidyquant.html">Performance Analysis with tidyquant</a> for a tutorial on these functions.</p></li>
+</ul>
+</div>
+<div id="prerequisites" class="section level1">
+<h1>Prerequisites</h1>
+<p>Load the <code>tidyquant</code> package to get started.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Loads tidyquant, tidyverse, lubridate, xts, quantmod, TTR </span>
+<span class="kw">library</span>(tidyquant)</code></pre></div>
+</div>
+<div id="retrieve-consolidated-symbol-data" class="section level1">
+<h1>Retrieve Consolidated Symbol Data</h1>
+<div id="stock-indexes" class="section level2">
+<h2>Stock Indexes</h2>
+<p>A wide range of stock index / exchange lists can be retrieved using <code>tq_index()</code>. To get a full list of the options, use <code>tq_index_options()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tq_index_options</span>()</code></pre></div>
+<pre><code>## [1] &quot;RUSSELL1000&quot; &quot;RUSSELL2000&quot; &quot;RUSSELL3000&quot; &quot;DOW&quot;         &quot;DOWGLOBAL&quot;  
+## [6] &quot;SP400&quot;       &quot;SP500&quot;       &quot;SP600&quot;       &quot;SP1000&quot;</code></pre>
+<p>Set <code>x</code> as one of the options in the list of options above to get the desired stock index / exchange.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tq_index</span>(<span class="st">&quot;SP500&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 505 x 5
+##    symbol                         company     weight
+##     &lt;chr&gt;                           &lt;chr&gt;      &lt;dbl&gt;
+##  1   AAPL                      Apple Inc. 0.03862634
+##  2   MSFT           Microsoft Corporation 0.02630071
+##  3     FB           Facebook Inc. Class A 0.01886553
+##  4   AMZN                 Amazon.com Inc. 0.01862570
+##  5    JNJ               Johnson &amp; Johnson 0.01678458
+##  6    XOM         Exxon Mobil Corporation 0.01609867
+##  7  BRK.B Berkshire Hathaway Inc. Class B 0.01592609
+##  8    JPM            JPMorgan Chase &amp; Co. 0.01559563
+##  9  GOOGL           Alphabet Inc. Class A 0.01329620
+## 10   GOOG           Alphabet Inc. Class C 0.01308732
+## # ... with 495 more rows, and 2 more variables: sector &lt;chr&gt;,
+## #   shares_held &lt;dbl&gt;</code></pre>
+<p>The data source is <a href="http://www.marketvolume.com/indexes_exchanges/">www.marketvolume.com</a>.</p>
+</div>
+<div id="stock-exchanges" class="section level2">
+<h2>Stock Exchanges</h2>
+<p>Stock lists for three stock exchanges are available: NASDAQ, NYSE, and AMEX. If you forget, just use <code>tq_exchange_options()</code>. We can easily get the full list of stocks on the NASDAQ exchange.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tq_exchange</span>(<span class="st">&quot;NASDAQ&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 3,241 x 7
+##    symbol                                company last.sale.price
+##     &lt;chr&gt;                                  &lt;chr&gt;           &lt;dbl&gt;
+##  1    PIH 1347 Property Insurance Holdings, Inc.            7.50
+##  2   TURN               180 Degree Capital Corp.            1.65
+##  3   FLWS                1-800 FLOWERS.COM, Inc.            9.45
+##  4   FCCY          1st Constitution Bancorp (NJ)           17.15
+##  5   SRCE                 1st Source Corporation           49.42
+##  6   VNET                   21Vianet Group, Inc.            4.18
+##  7   TWOU                               2U, Inc.           49.84
+##  8   JOBS                            51job, Inc.           49.67
+##  9   CAFD             8point3 Energy Partners LP           14.56
+## 10   EGHT                                8x8 Inc           13.15
+## # ... with 3,231 more rows, and 4 more variables: market.cap &lt;chr&gt;,
+## #   ipo.year &lt;dbl&gt;, sector &lt;chr&gt;, industry &lt;chr&gt;</code></pre>
+<p>The data source is the <a href="http://www.nasdaq.com/">NASDAQ</a>.</p>
+</div>
+</div>
+<div id="get-quantitative-data" class="section level1">
+<h1>Get Quantitative Data</h1>
+<p>The <code>tq_get()</code> function is used to collect data by changing the <code>get</code> argument. The options include stock prices, key statistics, dividends and splits from Yahoo Finance, key ratios from Morningstar, financial statements from Google Finance, metal prices and exchange rates from Oanda, and economic data from the FRED database. Use <code>tq_get_options()</code> to see the full list.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tq_get_options</span>()</code></pre></div>
+<pre><code>##  [1] &quot;stock.prices&quot;       &quot;stock.prices.japan&quot; &quot;financials&quot;        
+##  [4] &quot;key.stats&quot;          &quot;key.ratios&quot;         &quot;dividends&quot;         
+##  [7] &quot;splits&quot;             &quot;economic.data&quot;      &quot;exchange.rates&quot;    
+## [10] &quot;metal.prices&quot;       &quot;quandl&quot;             &quot;quandl.datatable&quot;</code></pre>
+<div id="stock-prices-dividends-and-splits" class="section level2">
+<h2>Stock Prices, Dividends and Splits</h2>
+<p>The stock prices can be retrieved succinctly using <code>get = &quot;stock.prices&quot;</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_prices  &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;stock.prices&quot;</span>, <span class="dt">from =</span> <span class="st">&quot; 1990-01-01&quot;</span>)
+aapl_prices </code></pre></div>
+<pre><code>## # A tibble: 6,952 x 7
+##          date  open  high   low    close   volume adjusted
+##        &lt;date&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1 1990-01-02 1.492 1.587 1.481 1.330357 45799600 1.122554
+##  2 1990-01-03 1.608 1.608 1.587 1.339286 51998800 1.130088
+##  3 1990-01-04 1.619 1.640 1.577 1.343750 55378400 1.133855
+##  4 1990-01-05 1.598 1.619 1.566 1.348214 30828000 1.137622
+##  5 1990-01-08 1.587 1.608 1.566 1.357143 25393200 1.145156
+##  6 1990-01-09 1.608 1.608 1.566 1.343750 21534800 1.133855
+##  7 1990-01-10 1.593 1.593 1.513 1.285714 49929600 1.084884
+##  8 1990-01-11 1.534 1.534 1.460 1.232143 52763200 1.039681
+##  9 1990-01-12 1.450 1.471 1.428 1.232143 42974400 1.039681
+## 10 1990-01-15 1.460 1.513 1.450 1.223214 40434800 1.032147
+## # ... with 6,942 more rows</code></pre>
+<p>Yahoo Japan stock prices can be retrieved using a similar call, <code>get = &quot;stock.prices.japan&quot;</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x8411T &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;8411.T&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;stock.prices.japan&quot;</span>, <span class="dt">from =</span> <span class="st">&quot;2016-01-01&quot;</span>, <span class="dt">to  =</span> <span class="st">&quot;2016-12-31&quot;</span>)</code></pre></div>
+<p>Dividends are obtained using <code>get = &quot;dividends&quot;</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_divs &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;dividends&quot;</span>, <span class="dt">from =</span> <span class="st">&quot;1990-01-01&quot;</span>)
+aapl_divs</code></pre></div>
+<pre><code>## # A tibble: 44 x 2
+##          date dividends
+##        &lt;date&gt;     &lt;dbl&gt;
+##  1 1990-02-16   0.00393
+##  2 1990-05-21   0.00393
+##  3 1990-08-20   0.00393
+##  4 1990-11-16   0.00429
+##  5 1991-02-15   0.00429
+##  6 1991-05-20   0.00429
+##  7 1991-08-19   0.00429
+##  8 1991-11-18   0.00429
+##  9 1992-02-14   0.00429
+## 10 1992-06-01   0.00429
+## # ... with 34 more rows</code></pre>
+<p>Stock splits are obtained using <code>get = &quot;splits&quot;</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_splits &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;splits&quot;</span>, <span class="dt">from =</span> <span class="st">&quot;1990-01-01&quot;</span>)
+aapl_splits</code></pre></div>
+<pre><code>## # A tibble: 3 x 2
+##         date    splits
+##       &lt;date&gt;     &lt;dbl&gt;
+## 1 2000-06-21 0.5000000
+## 2 2005-02-28 0.5000000
+## 3 2014-06-09 0.1428571</code></pre>
+<p>The data source is <a href="https://finance.yahoo.com/">Yahoo Finance</a> and <a href="http://finance.yahoo.co.jp/">Yahoo Finance Japan</a>.</p>
+</div>
+<div id="financial-statements" class="section level2">
+<h2>Financial Statements</h2>
+<p>For any given stock, a total of six financials statements are retrieved as nested tibbles, one for each combination of statement type (Income Statement, Balance Sheet, and Cash Flow) and period (by annual and quarter).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_financials &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;financials&quot;</span>)
+aapl_financials</code></pre></div>
+<pre><code>## # A tibble: 3 x 3
+##    type             annual            quarter
+## * &lt;chr&gt;             &lt;list&gt;             &lt;list&gt;
+## 1    BS &lt;tibble [168 x 4]&gt; &lt;tibble [210 x 4]&gt;
+## 2    CF  &lt;tibble [76 x 4]&gt;  &lt;tibble [76 x 4]&gt;
+## 3    IS &lt;tibble [196 x 4]&gt; &lt;tibble [245 x 4]&gt;</code></pre>
+<p>The statement information can be extracted by selecting (<code>dplyr::select()</code>) and filtering (<code>dplyr::filter()</code>) to the desired statement and unnesting (<code>tidyr::unnest()</code>) the results.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_financials <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">filter</span>(type <span class="op">==</span><span class="st"> &quot;IS&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">select</span>(annual) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">unnest</span>()</code></pre></div>
+<pre><code>## # A tibble: 196 x 4
+##    group             category       date  value
+##    &lt;int&gt;                &lt;chr&gt;     &lt;date&gt;  &lt;dbl&gt;
+##  1     1              Revenue 2016-09-24 215639
+##  2     1              Revenue 2015-09-26 233715
+##  3     1              Revenue 2014-09-27 182795
+##  4     1              Revenue 2013-09-28 170910
+##  5     2 Other Revenue, Total 2016-09-24     NA
+##  6     2 Other Revenue, Total 2015-09-26     NA
+##  7     2 Other Revenue, Total 2014-09-27     NA
+##  8     2 Other Revenue, Total 2013-09-28     NA
+##  9     3        Total Revenue 2016-09-24 215639
+## 10     3        Total Revenue 2015-09-26 233715
+## # ... with 186 more rows</code></pre>
+<p>A slightly more powerful example is looking at all quarterly statements together. This is easy to do with <code>unnest</code> and <code>spread</code> from the <code>tidyr</code> package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_financials <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">unnest</span>(quarter) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">spread</span>(<span class="dt">key =</span> date, <span class="dt">value =</span> value)</code></pre></div>
+<pre><code>## # A tibble: 110 x 8
+##     type group                         category `2016-06-25` `2016-09-24`
+##  * &lt;chr&gt; &lt;int&gt;                            &lt;chr&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+##  1    BS     1               Cash &amp; Equivalents           NA           NA
+##  2    BS     2           Short Term Investments        52638        58554
+##  3    BS     3  Cash and Short Term Investments        61756        67155
+##  4    BS     4 Accounts Receivable - Trade, Net        11714        15754
+##  5    BS     5              Receivables - Other           NA           NA
+##  6    BS     6           Total Receivables, Net        19042        29299
+##  7    BS     7                  Total Inventory         1831         2132
+##  8    BS     8                 Prepaid Expenses           NA           NA
+##  9    BS     9      Other Current Assets, Total        11132         8283
+## 10    BS    10             Total Current Assets        93761       106869
+## # ... with 100 more rows, and 3 more variables: `2016-12-31` &lt;dbl&gt;,
+## #   `2017-04-01` &lt;dbl&gt;, `2017-07-01` &lt;dbl&gt;</code></pre>
+<p>The data source is <a href="https://www.google.com/finance">Google Finance</a>.</p>
+</div>
+<div id="key-ratios-key-stats" class="section level2">
+<h2>Key Ratios &amp; Key Stats</h2>
+<p>The next two getters, key ratios and key stats, work in tandem. Key ratios provide the <em>historical</em> annual metrics on the stock / company for the last 10 years. Key stats provide the <em>real-time</em> metrics on the stock / company.</p>
+<div id="key-ratios" class="section level3">
+<h3>Key Ratios</h3>
+<p>For any given stock, the historical key ratios are available for 10 years, and are classified into the following sections:</p>
+<ul>
+<li><strong>Financials</strong>: These ratios include gross margin %, operating margin %, EPS, book value per share, and more.</li>
+<li><strong>Profitability</strong>: These ratios include margin as a percentage of sales (gross margin, operating margin, EBT margin, etc) and profitability metrics such as tax rate %, asset turnover, ROA, financial leverage, ROE, return on invested capital, and more.</li>
+<li><strong>Growth</strong>: These ratios include year over year, 3-year average, 5-year average, and 10-year average growth rates for revenue, operating income, net income, and EPS.</li>
+<li><strong>Cash Flow</strong>: These ratios include operating cash flow growth % YOY, free cash flow growth % YOY, capital expenditure as a % of sales, and more.</li>
+<li><strong>Financial Health</strong>: These ratios include balance sheet items as a percentage of total assets and liabilities, and liquidity/financial health metrics such as current ratio, quick ratio, debt/equity, and financial leverage.</li>
+<li><strong>Efficiency Ratios</strong>: These ratios include days sales outstanding, days inventory, inventory turnover, asset turnover and more.</li>
+<li><strong>Valuation Ratios</strong>: These ratios include price to earnings (P/E), price to sales (P/S), price to book (P/B), and price to operating cash flow.</li>
+</ul>
+<p>To get the key ratios:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_key_ratios &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;key.ratios&quot;</span>)
+aapl_key_ratios</code></pre></div>
+<pre><code>## # A tibble: 7 x 2
+##             section               data
+##               &lt;chr&gt;             &lt;list&gt;
+## 1        Financials &lt;tibble [150 x 5]&gt;
+## 2     Profitability &lt;tibble [170 x 5]&gt;
+## 3            Growth &lt;tibble [160 x 5]&gt;
+## 4         Cash Flow  &lt;tibble [50 x 5]&gt;
+## 5  Financial Health &lt;tibble [240 x 5]&gt;
+## 6 Efficiency Ratios  &lt;tibble [80 x 5]&gt;
+## 7  Valuation Ratios  &lt;tibble [40 x 5]&gt;</code></pre>
+<p>The ratios can be filtered and unnested to peel away the hierarchical nesting layers and access the underlying data:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_key_ratios <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">filter</span>(section <span class="op">==</span><span class="st"> &quot;Valuation Ratios&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">unnest</span>()</code></pre></div>
+<pre><code>## # A tibble: 40 x 6
+##             section      sub.section group          category       date
+##               &lt;chr&gt;            &lt;chr&gt; &lt;dbl&gt;             &lt;chr&gt;     &lt;date&gt;
+##  1 Valuation Ratios Valuation Ratios    86 Price to Earnings 2007-12-31
+##  2 Valuation Ratios Valuation Ratios    86 Price to Earnings 2008-12-31
+##  3 Valuation Ratios Valuation Ratios    86 Price to Earnings 2009-12-31
+##  4 Valuation Ratios Valuation Ratios    86 Price to Earnings 2010-12-31
+##  5 Valuation Ratios Valuation Ratios    86 Price to Earnings 2011-12-30
+##  6 Valuation Ratios Valuation Ratios    86 Price to Earnings 2012-12-31
+##  7 Valuation Ratios Valuation Ratios    86 Price to Earnings 2013-12-31
+##  8 Valuation Ratios Valuation Ratios    86 Price to Earnings 2014-12-31
+##  9 Valuation Ratios Valuation Ratios    86 Price to Earnings 2015-12-31
+## 10 Valuation Ratios Valuation Ratios    86 Price to Earnings 2016-12-30
+## # ... with 30 more rows, and 1 more variables: value &lt;dbl&gt;</code></pre>
+<p>Once we have a section, we can quickly visualize the ratios:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_key_ratios <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">filter</span>(section <span class="op">==</span><span class="st"> &quot;Valuation Ratios&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> value)) <span class="op">+</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">col =</span> forcats<span class="op">::</span><span class="kw">fct_reorder2</span>(category, date, value)),
+              <span class="dt">size =</span> <span class="dv">1</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;10-Year Historical Valuation Ratios for AAPL&quot;</span>, <span class="dt">x =</span> <span class="st">&quot;&quot;</span>, 
+         <span class="dt">y =</span> <span class="st">&quot;&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">theme_tq</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">scale_color_tq</span>()</code></pre></div>
+<p><img src="data:image/png;base64,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" width="95%" style="display: block; margin: auto;" /></p>
+<p>The data source is <a href="http://www.morningstar.com/">Morningstar</a>.</p>
+</div>
+<div id="key-stats" class="section level3">
+<h3>Key Stats</h3>
+<p>For any given stock, the current key statistics are available in real time. It’s quite a bit of information, with 55 real-time stats available, so we’ll just take a look at the column names.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aapl_key_stats &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;key.stats&quot;</span>)
+aapl_key_stats <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">colnames</span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">cat</span>() <span class="co"># Print in condensed format</span></code></pre></div>
+<pre><code>## Ask Ask.Size Average.Daily.Volume Bid Bid.Size Book.Value Change Change.From.200.day.Moving.Average Change.From.50.day.Moving.Average Change.From.52.week.High Change.From.52.week.Low Change.in.Percent Currency Days.High Days.Low Days.Range Dividend.Pay.Date Dividend.Yield Dividend.per.Share EBITDA EPS EPS.Estimate.Current.Year EPS.Estimate.Next.Quarter EPS.Estimate.Next.Year Ex.Dividend.Date Float.Shares High.52.week Last.Trade.Date Last.Trade.Price.Only Last.Trade.Size Last.Trade.With.Time Low.52.week Market.Capitalization Moving.Average.200.day Moving.Average.50.day Name Open PE.Ratio PEG.Ratio Percent.Change.From.200.day.Moving.Average Percent.Change.From.50.day.Moving.Average Percent.Change.From.52.week.High Percent.Change.From.52.week.Low Previous.Close Price.to.Book Price.to.EPS.Estimate.Current.Year Price.to.EPS.Estimate.Next.Year Price.to.Sales Range.52.week Revenue Shares.Outstanding Short.Ratio Stock.Exchange Target.Price.1.yr. Volume</code></pre>
+<p>The data is returned in wide format (as opposed to long format) because we can easily get the key stats for multiple stocks and pare down the list for comparisons. Here I use <code>select</code> to select several columns to compare.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="st">&quot;FB&quot;</span>, <span class="st">&quot;GOOG&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_get</span>(<span class="dt">get =</span> <span class="st">&quot;key.stats&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">select</span>(symbol, Ask, Ask.Size, Bid, Bid.Size, Change, Days.High, Days.Low)</code></pre></div>
+<pre><code>## # A tibble: 3 x 8
+##   symbol    Ask Ask.Size    Bid Bid.Size Change Days.High Days.Low
+##    &lt;chr&gt;  &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1   AAPL 155.72      100 155.64      100  -1.57    157.21   155.02
+## 2     FB 168.66      500 168.60      200  -0.71    169.70   168.25
+## 3   GOOG 925.00      100 923.65      500  -6.74    932.24   922.24</code></pre>
+<p>Finally, because the statistics are real-time, we can setup real-time monitoring by calling <code>tq_get</code> at periodic intervals. The function below is not evaluated for time considerations, but if called during active trading sessions will collect five samples at three second intervals.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Not evaluated; When run during active trading, will return real-time values</span>
+collect_real_time_data &lt;-<span class="st"> </span><span class="cf">function</span>(x, interval_sec, n) {
+    data &lt;-<span class="st"> </span><span class="kw">tibble</span>()
+    <span class="cf">while</span> (n <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {
+        data &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(data, <span class="kw">tq_get</span>(x, <span class="dt">get =</span> <span class="st">&quot;key.stats&quot;</span>))
+        <span class="kw">Sys.sleep</span>(interval_sec)
+        n &lt;-<span class="st"> </span>n <span class="op">-</span><span class="st"> </span><span class="dv">1</span>
+    }
+    <span class="kw">return</span>(data)
+}
+<span class="kw">collect_real_time_data</span>(<span class="st">&quot;AAPL&quot;</span>, <span class="dt">interval_sec =</span> <span class="dv">3</span>, <span class="dt">n =</span> <span class="dv">5</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">select</span>(Ask, Ask.Size, Bid, Bid.Size, Open, Change)</code></pre></div>
+<p>The data source is <a href="https://finance.yahoo.com/">Yahoo Finance</a>.</p>
+</div>
+</div>
+<div id="quandl" class="section level2">
+<h2>Quandl</h2>
+<p><a href="https://www.quandl.com/">Quandl</a> provides access to a vast number of financial and economic databases. The <code>Quandl</code> package has been integrated into <code>tidyquant</code> as follows.</p>
+<div id="authentication" class="section level3">
+<h3>Authentication</h3>
+<p>To make full use of the integration we recommend you set your api key. To do this create or sign into your Quandl account and go to your account api key page.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">quandl_api_key</span>(<span class="st">&quot;enter-your-api-key-here&quot;</span>)</code></pre></div>
+</div>
+<div id="search" class="section level3">
+<h3>Search</h3>
+<p>Searching Quandl from within the R console is possible with <code>quandl_search()</code>, a wrapper for <code>Quandl::Quandl.search()</code>. An example search is shown below. The only required argument is <code>query</code>. You can also visit the <a href="https://www.quandl.com/search">Quandl Search</a> webpage to search for available database codes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">quandl_search</span>(<span class="dt">query =</span> <span class="st">&quot;Oil&quot;</span>, <span class="dt">database_code =</span> <span class="st">&quot;NSE&quot;</span>, <span class="dt">per_page =</span> <span class="dv">3</span>)</code></pre></div>
+</div>
+<div id="getting-quandl-data" class="section level3">
+<h3>Getting Quandl Data</h3>
+<p>Getting data is integrated into <code>tq_get()</code>. Two get options exist to retrieve Quandl data:</p>
+<ol style="list-style-type: decimal">
+<li><code>get = &quot;quandl&quot;</code>: Get’s Quandl time series data. A wrapper for <code>Quandl()</code>.</li>
+<li><code>get = &quot;quandl.datatable&quot;</code>: Gets Quandl datatables (larger data sets that may not be time series). A wrapper for <code>Quandl.datatable()</code>.</li>
+</ol>
+<p>Getting data from Quandl can be achieved in much the same way as the other “get” options. Just pass the “codes” for the data along with desired arguments for the underlying function.</p>
+<p>The following uses <code>get = &quot;quandl&quot;</code> and the “WIKI” database to download daily stock prices for FB and AAPL in 2016. The output is a tidy data frame.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="st">&quot;WIKI/FB&quot;</span>, <span class="st">&quot;WIKI/AAPL&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_get</span>(<span class="dt">get  =</span> <span class="st">&quot;quandl&quot;</span>,
+           <span class="dt">from =</span> <span class="st">&quot;2016-01-01&quot;</span>,
+           <span class="dt">to   =</span> <span class="st">&quot;2016-12-31&quot;</span>)</code></pre></div>
+<p>The following time series options are available to be passed to the underlying <code>Quandl()</code> function:</p>
+<ul>
+<li><code>start_date</code> (<code>from</code>) = “yyyy-mm-dd” | <code>end_date</code> (<code>to</code>) = “yyyy-mm-dd”</li>
+<li><code>column_index</code> = numeric column number (e.g. 1)</li>
+<li><code>rows</code> = numeric row number indicating first n rows (e.g. 100)</li>
+<li><code>collapse</code> = “none”, “daily”, “weekly”, “monthly”, “quarterly”, “annual”</li>
+<li><code>transform</code> = “none”, “diff”, “rdiff”, “cumul”, “normalize”</li>
+</ul>
+<p>Here’s an example to get period returns of the adj.close (column index 11) using the <code>column_index</code>, <code>collapse</code> and <code>transform</code> arguments.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="st">&quot;WIKI/FB&quot;</span>, <span class="st">&quot;WIKI/AAPL&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_get</span>(<span class="dt">get          =</span> <span class="st">&quot;quandl&quot;</span>,
+           <span class="dt">from         =</span> <span class="st">&quot;2007-01-01&quot;</span>,
+           <span class="dt">to           =</span> <span class="st">&quot;2016-12-31&quot;</span>,
+           <span class="dt">column_index =</span> <span class="dv">11</span>, 
+           <span class="dt">collapse     =</span> <span class="st">&quot;annual&quot;</span>,      
+           <span class="dt">transform    =</span> <span class="st">&quot;rdiff&quot;</span>)       </code></pre></div>
+<p>Datatables are larger data sets. These can be downloaded using <code>get = &quot;quandl.datatable&quot;</code>. Note that the time series arguments do not work with data tables.</p>
+<p>Here’s several examples of <a href="https://www.quandl.com/databases/ZFB/documentation/about">Zacks Fundamentals Collection B</a></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Zacks Fundamentals Collection B (DOW 30 Available to non subscribers)</span>
+<span class="kw">tq_get</span>(<span class="st">&quot;ZACKS/FC&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;quandl.datatable&quot;</span>)   <span class="co"># Zacks Fundamentals Condensed</span>
+<span class="kw">tq_get</span>(<span class="st">&quot;ZACKS/FR&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;quandl.datatable&quot;</span>)   <span class="co"># Zacks Fundamental Ratios</span>
+<span class="kw">tq_get</span>(<span class="st">&quot;ZACKS/MT&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;quandl.datatable&quot;</span>)   <span class="co"># Zacks Master Table</span>
+<span class="kw">tq_get</span>(<span class="st">&quot;ZACKS/MKTV&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;quandl.datatable&quot;</span>) <span class="co"># Zacks Market Value Supplement</span>
+<span class="kw">tq_get</span>(<span class="st">&quot;ZACKS/SHRS&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;quandl.datatable&quot;</span>) <span class="co"># Zacks Shares Out Supplement</span></code></pre></div>
+</div>
+</div>
+<div id="economic-data" class="section level2">
+<h2>Economic Data</h2>
+<p>A wealth of economic data can be extracted from the Federal Reserve Economic Data (FRED) database. The <a href="https://fred.stlouisfed.org/series/DCOILWTICO">WTI Crude Oil Prices</a> are shown below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wti_price_usd &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;DCOILWTICO&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;economic.data&quot;</span>)
+wti_price_usd </code></pre></div>
+<pre><code>## # A tibble: 2,761 x 2
+##          date price
+##        &lt;date&gt; &lt;dbl&gt;
+##  1 2007-01-01    NA
+##  2 2007-01-02 60.77
+##  3 2007-01-03 58.31
+##  4 2007-01-04 55.65
+##  5 2007-01-05 56.29
+##  6 2007-01-08 56.08
+##  7 2007-01-09 55.65
+##  8 2007-01-10 53.95
+##  9 2007-01-11 51.91
+## 10 2007-01-12 52.96
+## # ... with 2,751 more rows</code></pre>
+<p>The FRED contains literally over 10K data sets that are free to use. See the <a href="https://fred.stlouisfed.org/categories">FRED categories</a> to narrow down the data base and to get data codes.</p>
+</div>
+<div id="exchange-rates" class="section level2">
+<h2>Exchange Rates</h2>
+<p>Exchange rates are entered as currency pairs using “/” notation (e.g <code>&quot;EUR/USD&quot;</code>), and by setting <code>get = &quot;exchange.rates&quot;</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">eur_usd &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;EUR/USD&quot;</span>, 
+                  <span class="dt">get =</span> <span class="st">&quot;exchange.rates&quot;</span>, 
+                  <span class="dt">from =</span> <span class="kw">Sys.Date</span>() <span class="op">-</span><span class="st"> </span>lubridate<span class="op">::</span><span class="kw">days</span>(<span class="dv">10</span>))
+eur_usd </code></pre></div>
+<pre><code>## # A tibble: 10 x 2
+##          date exchange.rate
+##        &lt;date&gt;         &lt;dbl&gt;
+##  1 2017-07-24      1.165104
+##  2 2017-07-25      1.165612
+##  3 2017-07-26      1.165977
+##  4 2017-07-27      1.170522
+##  5 2017-07-28      1.172088
+##  6 2017-07-29      1.174980
+##  7 2017-07-30      1.175286
+##  8 2017-07-31      1.176936
+##  9 2017-08-01      1.181516
+## 10 2017-08-02      1.183946</code></pre>
+<p>The data source is <a href="https://www.oanda.com/">Oanda</a>, and list of currencies to compare can be found on <a href="https://www.oanda.com/currency/converter/">Oanda’s currency converter</a>. It may make more sense to get this data from the FRED (See <a href="#economic-data">Economic Data</a>) since the max period for Oanda is 180 days.</p>
+</div>
+<div id="metal-prices" class="section level2">
+<h2>Metal Prices</h2>
+<p>Metal prices are very similar to stock prices. Set <code>get = &quot;metal.prices&quot;</code> along with the appropriate commodity symbol (e.g. XAU (gold) , XAG (silver), XPD (palladium), or XPT (platinum)).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plat_price_eur &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;plat&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;metal.prices&quot;</span>, 
+                         <span class="dt">from =</span> <span class="kw">Sys.Date</span>() <span class="op">-</span><span class="st"> </span>lubridate<span class="op">::</span><span class="kw">days</span>(<span class="dv">10</span>),
+                         <span class="dt">base.currency =</span> <span class="st">&quot;EUR&quot;</span>)
+plat_price_eur </code></pre></div>
+<pre><code>## # A tibble: 10 x 2
+##          date    price
+##        &lt;date&gt;    &lt;dbl&gt;
+##  1 2017-07-24 801.5048
+##  2 2017-07-25 797.7167
+##  3 2017-07-26 793.8248
+##  4 2017-07-27 794.3785
+##  5 2017-07-28 793.5137
+##  6 2017-07-29 791.5608
+##  7 2017-07-30 796.3460
+##  8 2017-07-31 797.3128
+##  9 2017-08-01 798.3132
+## 10 2017-08-02 799.0965</code></pre>
+<p>The data source is <a href="https://www.oanda.com/">Oanda</a>. It may make more sense to get this data from the FRED (See <a href="#economic-data">Economic Data</a>) since the max period for Oanda is 180 days.</p>
+</div>
+</div>
+<div id="mutate-quantitative-data" class="section level1">
+<h1>Mutate Quantitative Data</h1>
+<p>Mutating functions enable the <code>xts</code>/<code>zoo</code>, <code>quantmod</code> and <code>TTR</code> functions to shine. We’ll touch on the mutation functions briefly using the <code>FANG</code> data set, which consists of daily prices for FB, AMZN, GOOG, and NFLX from the beginning of 2013 to the end of 2016. We’ll apply the functions to grouped data sets to get a feel for how each works</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(FANG)
+FANG</code></pre></div>
+<pre><code>## # A tibble: 4,032 x 8
+##    symbol       date  open  high   low close    volume adjusted
+##     &lt;chr&gt;     &lt;date&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1     FB 2013-01-02 27.44 28.18 27.42 28.00  69846400    28.00
+##  2     FB 2013-01-03 27.88 28.47 27.59 27.77  63140600    27.77
+##  3     FB 2013-01-04 28.01 28.93 27.83 28.76  72715400    28.76
+##  4     FB 2013-01-07 28.69 29.79 28.65 29.42  83781800    29.42
+##  5     FB 2013-01-08 29.51 29.60 28.86 29.06  45871300    29.06
+##  6     FB 2013-01-09 29.67 30.60 29.49 30.59 104787700    30.59
+##  7     FB 2013-01-10 30.60 31.45 30.28 31.30  95316400    31.30
+##  8     FB 2013-01-11 31.28 31.96 31.10 31.72  89598000    31.72
+##  9     FB 2013-01-14 32.08 32.21 30.62 30.95  98892800    30.95
+## 10     FB 2013-01-15 30.64 31.71 29.88 30.10 173242600    30.10
+## # ... with 4,022 more rows</code></pre>
+<p>For a detailed walkthrough of the compatible functions, see the next vignette in the series, <a href="TQ02-quant-integrations-in-tidyquant.html">R Quantitative Analysis Package Integrations in tidyquant</a>.</p>
+<div id="transmute-quantitative-data-tq_transmute" class="section level2">
+<h2>Transmute Quantitative Data, tq_transmute</h2>
+<p>Transmute the results of <code>tq_get()</code>. Transmute here holds almost the same meaning as in <code>dplyr</code>, only the newly created columns will be returned, but with <code>tq_transmute()</code>, the number of rows returned can be different than the original data frame. This is important for changing periodicity. An example is periodicity aggregation from daily to monthly.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">FANG <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">group_by</span>(symbol) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_transmute</span>(<span class="dt">select =</span> adjusted, <span class="dt">mutate_fun =</span> to.monthly, <span class="dt">indexAt =</span> <span class="st">&quot;lastof&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 192 x 3
+## # Groups:   symbol [4]
+##    symbol       date adjusted
+##     &lt;chr&gt;     &lt;date&gt;    &lt;dbl&gt;
+##  1     FB 2013-01-31    30.98
+##  2     FB 2013-02-28    27.25
+##  3     FB 2013-03-31    25.58
+##  4     FB 2013-04-30    27.77
+##  5     FB 2013-05-31    24.35
+##  6     FB 2013-06-30    24.88
+##  7     FB 2013-07-31    36.80
+##  8     FB 2013-08-31    41.29
+##  9     FB 2013-09-30    50.23
+## 10     FB 2013-10-31    50.21
+## # ... with 182 more rows</code></pre>
+<p>Let’s go through what happened. <code>select</code> allows you to easily choose what columns get passed to <code>mutate_fun</code>. In example above, <code>adjusted</code> selects the “adjusted” column from <code>data</code>, and sends it to the mutate function, <code>to.monthly</code>, which mutates the periodicity from daily to monthly. Additional arguments can be passed to the <code>mutate_fun</code> by way of <code>...</code>. We are passing the <code>indexAt</code> argument to return a date that matches the first date in the period.</p>
+<div id="working-with-non-ohlc-data" class="section level3">
+<h3>Working with non-OHLC data</h3>
+<p>Returns from FRED, Oanda, and other sources do not have open, high, low, close (OHLC) format. However, this is not a problem with <code>select</code>. The following example shows how to transmute WTI Crude daily prices to monthly prices. Since we only have a single column to pass, we can leave the <code>select</code> argument as <code>NULL</code> which selects all columns by default. This sends the price column to the <code>to.period</code> mutate function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wti_prices &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;DCOILWTICO&quot;</span>, <span class="dt">get =</span> <span class="st">&quot;economic.data&quot;</span>) 
+wti_prices <span class="op">%&gt;%</span><span class="st">    </span>
+<span class="st">    </span><span class="kw">tq_transmute</span>(<span class="dt">mutate_fun =</span> to.period,
+                 <span class="dt">period =</span> <span class="st">&quot;months&quot;</span>, 
+                 <span class="dt">col_rename =</span> <span class="st">&quot;WTI Price&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 127 x 2
+##          date `WTI Price`
+##        &lt;date&gt;       &lt;dbl&gt;
+##  1 2007-01-31       58.17
+##  2 2007-02-28       61.78
+##  3 2007-03-30       65.94
+##  4 2007-04-30       65.78
+##  5 2007-05-31       64.02
+##  6 2007-06-29       70.47
+##  7 2007-07-31       78.20
+##  8 2007-08-31       73.98
+##  9 2007-09-28       81.64
+## 10 2007-10-31       94.16
+## # ... with 117 more rows</code></pre>
+</div>
+</div>
+<div id="mutate-quantitative-data-tq_mutate" class="section level2">
+<h2>Mutate Quantitative Data, tq_mutate</h2>
+<p>Adds a column or set of columns to the tibble with the calculated attributes (hence the original tibble is returned, mutated with the additional columns). An example is getting the <code>MACD</code> from <code>close</code>, which mutates the original input by adding MACD and Signal columns. Note that we can quickly rename the columns using the <code>col_rename</code> argument.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">FANG <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">group_by</span>(symbol) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_mutate</span>(<span class="dt">select     =</span> close, 
+              <span class="dt">mutate_fun =</span> MACD, 
+              <span class="dt">col_rename =</span> <span class="kw">c</span>(<span class="st">&quot;MACD&quot;</span>, <span class="st">&quot;Signal&quot;</span>))</code></pre></div>
+<pre><code>## # A tibble: 4,032 x 10
+## # Groups:   symbol [4]
+##    symbol       date  open  high   low close    volume adjusted  MACD
+##     &lt;chr&gt;     &lt;date&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+##  1     FB 2013-01-02 27.44 28.18 27.42 28.00  69846400    28.00    NA
+##  2     FB 2013-01-03 27.88 28.47 27.59 27.77  63140600    27.77    NA
+##  3     FB 2013-01-04 28.01 28.93 27.83 28.76  72715400    28.76    NA
+##  4     FB 2013-01-07 28.69 29.79 28.65 29.42  83781800    29.42    NA
+##  5     FB 2013-01-08 29.51 29.60 28.86 29.06  45871300    29.06    NA
+##  6     FB 2013-01-09 29.67 30.60 29.49 30.59 104787700    30.59    NA
+##  7     FB 2013-01-10 30.60 31.45 30.28 31.30  95316400    31.30    NA
+##  8     FB 2013-01-11 31.28 31.96 31.10 31.72  89598000    31.72    NA
+##  9     FB 2013-01-14 32.08 32.21 30.62 30.95  98892800    30.95    NA
+## 10     FB 2013-01-15 30.64 31.71 29.88 30.10 173242600    30.10    NA
+## # ... with 4,022 more rows, and 1 more variables: Signal &lt;dbl&gt;</code></pre>
+<p>Note that a mutation can occur if, and only if, the mutation has the same structure of the original tibble. In other words, the calculation must have the same number of rows and row.names (or date fields), otherwise the mutation cannot be performed.</p>
+<div id="mutate-rolling-regressions-with-rollapply" class="section level3">
+<h3>Mutate rolling regressions with rollapply</h3>
+<p>A very powerful example is applying <strong>custom functions</strong> across a rolling window using <code>rollapply</code>. A specific example is using the <code>rollapply</code> function to compute a rolling regression. This example is slightly more complicated so it will be broken down into three steps:</p>
+<ol style="list-style-type: decimal">
+<li>Get returns</li>
+<li>Create a custom function</li>
+<li>Apply the custom function accross a rolling window using <code>tq_mutate(mutate_fun = rollapply)</code></li>
+</ol>
+<p><em>Step 1: Get Returns</em></p>
+<p>First, get combined returns. The asset and baseline returns should be in wide format, which is needed for the <code>lm</code> function in the next step.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fb_returns &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;FB&quot;</span>, <span class="dt">get  =</span> <span class="st">&quot;stock.prices&quot;</span>, <span class="dt">from =</span> <span class="st">&quot;2016-01-01&quot;</span>, <span class="dt">to   =</span> <span class="st">&quot;2016-12-31&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_transmute</span>(adjusted, periodReturn, <span class="dt">period =</span> <span class="st">&quot;weekly&quot;</span>, <span class="dt">col_rename =</span> <span class="st">&quot;fb.returns&quot;</span>)
+
+xlk_returns &lt;-<span class="st"> </span><span class="kw">tq_get</span>(<span class="st">&quot;XLK&quot;</span>, <span class="dt">from =</span> <span class="st">&quot;2016-01-01&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;2016-12-31&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_transmute</span>(adjusted, periodReturn, <span class="dt">period =</span> <span class="st">&quot;weekly&quot;</span>, <span class="dt">col_rename =</span> <span class="st">&quot;xlk.returns&quot;</span>)
+
+returns_combined &lt;-<span class="st"> </span><span class="kw">left_join</span>(fb_returns, xlk_returns, <span class="dt">by =</span> <span class="st">&quot;date&quot;</span>)
+returns_combined</code></pre></div>
+<pre><code>## # A tibble: 52 x 3
+##          date   fb.returns  xlk.returns
+##        &lt;date&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+##  1 2016-01-08 -0.047837986 -0.051573402
+##  2 2016-01-15 -0.024247416 -0.018707721
+##  3 2016-01-22  0.031273044  0.026436177
+##  4 2016-01-29  0.145701416  0.021297756
+##  5 2016-02-05 -0.072542546 -0.042192137
+##  6 2016-02-12 -0.019794350 -0.005822784
+##  7 2016-02-19  0.025095559  0.035395912
+##  8 2016-02-26  0.032035938  0.014756404
+##  9 2016-03-04  0.004355087  0.028114539
+## 10 2016-03-11  0.009410508  0.010608164
+## # ... with 42 more rows</code></pre>
+<p><em>Step 2: Create a custom function</em></p>
+<p>Next, create a custom regression function, which will be used to apply over the rolling window in Step 3. An important point is that the “data” will be passed to the regression function as an <code>xts</code> object. The <code>timetk::tk_tbl</code> function takes care of converting to a data frame for the <code>lm</code> function to work properly with the columns “fb.returns” and “xlk.returns”.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regr_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
+    <span class="kw">coef</span>(<span class="kw">lm</span>(fb.returns <span class="op">~</span><span class="st"> </span>xlk.returns, <span class="dt">data =</span> timetk<span class="op">::</span><span class="kw">tk_tbl</span>(data, <span class="dt">silent =</span> <span class="ot">TRUE</span>)))
+}</code></pre></div>
+<p><em>Step 3: Apply the custom function</em></p>
+<p>Now we can use <code>tq_mutate()</code> to apply the custom regression function over a rolling window using <code>rollapply</code> from the <code>zoo</code> package. Internally, since we left <code>select = NULL</code>, the <code>returns_combined</code> data frame is being passed automatically to the <code>data</code> argument of the <code>rollapply</code> function. All you need to specify is the <code>mutate_fun = rollapply</code> and any additional arguments necessary to apply the <code>rollapply</code> function. We’ll specify a 12 week window via <code>width = 12</code>. The <code>FUN</code> argument is our custom regression function, <code>regr_fun</code>. It’s extremely important to specify <code>by.column = FALSE</code>, which tells <code>rollapply</code> to perform the computation using the data as a whole rather than apply the function to each column independently. The <code>col_rename</code> argument is used to rename the added columns.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">returns_combined <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_mutate</span>(<span class="dt">mutate_fun =</span> rollapply,
+              <span class="dt">width      =</span> <span class="dv">12</span>,
+              <span class="dt">FUN        =</span> regr_fun,
+              <span class="dt">by.column  =</span> <span class="ot">FALSE</span>,
+              <span class="dt">col_rename =</span> <span class="kw">c</span>(<span class="st">&quot;coef.0&quot;</span>, <span class="st">&quot;coef.1&quot;</span>))</code></pre></div>
+<pre><code>## # A tibble: 52 x 5
+##          date   fb.returns  xlk.returns coef.0 coef.1
+##        &lt;date&gt;        &lt;dbl&gt;        &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 2016-01-08 -0.047837986 -0.051573402     NA     NA
+##  2 2016-01-15 -0.024247416 -0.018707721     NA     NA
+##  3 2016-01-22  0.031273044  0.026436177     NA     NA
+##  4 2016-01-29  0.145701416  0.021297756     NA     NA
+##  5 2016-02-05 -0.072542546 -0.042192137     NA     NA
+##  6 2016-02-12 -0.019794350 -0.005822784     NA     NA
+##  7 2016-02-19  0.025095559  0.035395912     NA     NA
+##  8 2016-02-26  0.032035938  0.014756404     NA     NA
+##  9 2016-03-04  0.004355087  0.028114539     NA     NA
+## 10 2016-03-11  0.009410508  0.010608164     NA     NA
+## # ... with 42 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">returns_combined</code></pre></div>
+<pre><code>## # A tibble: 52 x 3
+##          date   fb.returns  xlk.returns
+##        &lt;date&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+##  1 2016-01-08 -0.047837986 -0.051573402
+##  2 2016-01-15 -0.024247416 -0.018707721
+##  3 2016-01-22  0.031273044  0.026436177
+##  4 2016-01-29  0.145701416  0.021297756
+##  5 2016-02-05 -0.072542546 -0.042192137
+##  6 2016-02-12 -0.019794350 -0.005822784
+##  7 2016-02-19  0.025095559  0.035395912
+##  8 2016-02-26  0.032035938  0.014756404
+##  9 2016-03-04  0.004355087  0.028114539
+## 10 2016-03-11  0.009410508  0.010608164
+## # ... with 42 more rows</code></pre>
+<p>As shown above, the rolling regression coefficients were added to the data frame.</p>
+</div>
+</div>
+<div id="xy-variants-tq_mutate_xy-and-tq_transmute_xy" class="section level2">
+<h2>_xy Variants, tq_mutate_xy and tq_transmute_xy</h2>
+<p>Enables working with mutation functions that require two primary inputs (e.g. EVWMA, VWAP, etc).</p>
+<div id="mutate-with-two-primary-inputs" class="section level3">
+<h3>Mutate with two primary inputs</h3>
+<p>EVWMA (exponential volume-weighted moving average) requires two inputs, price and volume. To work with these columns, we can switch to the xy variants, <code>tq_transmute_xy()</code> and <code>tq_mutate_xy()</code>. The only difference is instead of the <code>select</code> argument, you use <code>x</code> and <code>y</code> arguments to pass the columns needed based on the <code>mutate_fun</code> documentation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">FANG <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">group_by</span>(symbol) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">tq_mutate_xy</span>(<span class="dt">x =</span> close, <span class="dt">y =</span> volume, 
+                 <span class="dt">mutate_fun =</span> EVWMA, <span class="dt">col_rename =</span> <span class="st">&quot;EVWMA&quot;</span>)</code></pre></div>
+<pre><code>## # A tibble: 4,032 x 9
+## # Groups:   symbol [4]
+##    symbol       date  open  high   low close    volume adjusted EVWMA
+##     &lt;chr&gt;     &lt;date&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+##  1     FB 2013-01-02 27.44 28.18 27.42 28.00  69846400    28.00    NA
+##  2     FB 2013-01-03 27.88 28.47 27.59 27.77  63140600    27.77    NA
+##  3     FB 2013-01-04 28.01 28.93 27.83 28.76  72715400    28.76    NA
+##  4     FB 2013-01-07 28.69 29.79 28.65 29.42  83781800    29.42    NA
+##  5     FB 2013-01-08 29.51 29.60 28.86 29.06  45871300    29.06    NA
+##  6     FB 2013-01-09 29.67 30.60 29.49 30.59 104787700    30.59    NA
+##  7     FB 2013-01-10 30.60 31.45 30.28 31.30  95316400    31.30    NA
+##  8     FB 2013-01-11 31.28 31.96 31.10 31.72  89598000    31.72    NA
+##  9     FB 2013-01-14 32.08 32.21 30.62 30.95  98892800    30.95    NA
+## 10     FB 2013-01-15 30.64 31.71 29.88 30.10 173242600    30.10  30.1
+## # ... with 4,022 more rows</code></pre>
+</div>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

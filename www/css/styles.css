@@ -1,0 +1,379 @@
+/***** Fonts *****/
+@font-face {
+    font-family:'ClearSans';
+    font-weight:700;
+    src:url(../fonts/clearsans/EOT/ClearSans-Bold.eot);
+    /* IE9 Compat Modes */
+    src:url(../fonts/clearsans/EOT/ClearSans-Bold.eot?#iefix) format("embedded-opentype"), url(../fonts/clearsans/WOFF/ClearSans-Bold.woff) format("woff"), url(../fonts/clearsans/TTF/ClearSans-Bold.ttf) format("truetype"), url(../fonts/clearsans/SVG/ClearSans-Bold.svg#svgClearSansBold) format("svg")
+    /* Legacy iOS */
+}
+
+@font-face {
+    font-family:'ClearSansBold';
+    font-weight:700;
+    src:url(../fonts/clearsans/EOT/ClearSans-Bold.eot);
+    /* IE9 Compat Modes */
+    src:url(../fonts/clearsans/EOT/ClearSans-Bold.eot?#iefix) format("embedded-opentype"), url(../fonts/clearsans/WOFF/ClearSans-Bold.woff) format("woff"), url(../fonts/clearsans/TTF/ClearSans-Bold.ttf) format("truetype"), url(../fonts/clearsans/SVG/ClearSans-Bold.svg#svgClearSansBold) format("svg")
+    /* Legacy iOS */
+}
+
+@font-face {
+    font-family:'ClearSans';
+    font-weight:700;
+    font-style:italic;
+    src:url(../fonts/clearsans/EOT/ClearSans-BoldItalic.eot);
+    /* IE9 Compat Modes */
+    src:url(../fonts/clearsans/EOT/ClearSans-BoldItalic.eot?#iefix) format("embedded-opentype"), url(../fonts/clearsans/WOFF/ClearSans-BoldItalic.woff) format("woff"), url(../fonts/clearsans/TTF/ClearSans-BoldItalic.ttf) format("truetype"), url(../fonts/clearsans/SVG/ClearSans-BoldItalic.svg#svgClearSansBoldItalic) format("svg")
+    /* Legacy iOS */
+}
+
+@font-face {
+    font-family:'ClearSans';
+    font-weight:400;
+    src:url(../fonts/clearsans/EOT/ClearSans-Regular.eot);
+    /* IE9 Compat Modes */
+    src:url(../fonts/clearsans/EOT/ClearSans-Regular.eot?#iefix) format("embedded-opentype"), url(../fonts/clearsans/WOFF/ClearSans-Regular.woff) format("woff"), url(../fonts/clearsans/TTF/ClearSans-Regular.ttf) format("truetype"), url(../fonts/clearsans/SVG/ClearSans-Regular.svg#svgClearSansRegular) format("svg")
+    /* Legacy iOS */
+}
+
+@font-face {
+    font-family:'ClearSans';
+    font-weight:400;
+    font-style:italic;
+    src:url(../fonts/clearsans/EOT/ClearSans-Italic.eot);
+    /* IE9 Compat Modes */
+    src:url(../fonts/clearsans/EOT/ClearSans-Italic.eot?#iefix) format("embedded-opentype"), url(../fonts/clearsans/WOFF/ClearSans-Italic.woff) format("woff"), url(../fonts/clearsans/TTF/ClearSans-Italic.ttf) format("truetype"), url(../fonts/clearsans/SVG/ClearSans-Italic.svg#svgClearSansItalic) format("svg")
+    /* Legacy iOS */
+} 
+
+/***** Grid *****/
+*{
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  box-sizing:border-box;
+}
+
+.custom-container:before, .custom-container:after {
+  content:" ";
+  display:table;
+}
+
+.csutom-container:after{
+  clear:both;
+}
+
+.custom-container .custom-row{
+  margin-left:-10px;
+  margin-right:-10px;
+}
+
+.custom-container{
+  margin-left:auto;
+  margin-right:auto;
+  max-width:940px;
+}
+
+.custom-row:before, .custom-row:after {
+  content:" ";
+  display:table;
+}
+
+.custom-row:after{
+  clear:both;
+}
+
+.custom-row:before, .custom-row:after {
+  content:" ";
+  display:table;
+}
+
+.col{
+  position:relative;
+  float:left;
+  width:100%;
+  min-height:1px;
+  padding-left:10px;
+  padding-right:10px;
+}
+
+.col-3{
+  width:25%;
+}
+
+.col-9{
+  width:75%;
+}
+
+/***** Body/Text *****/
+body{
+  font-family: "ClearSans",sans-serif;
+  font-weight:400;
+  font-size:medium;
+  line-height: 1.25;
+  color: #575757;
+  padding:0;
+  margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+
+h1,h2,h3,h4,h5,h6{
+  font-family:'Archer','Archer SSm A','Archer SSm B';
+  font-weight: 400;
+  font-style: normal;
+  line-height:1;
+  margin:0;
+}
+
+/***** Sticky Footer *****/
+*{
+  margin:0;
+}
+
+html, body{
+  height:100%;
+}
+
+.wrapper{
+  min-height:100%;
+  height:auto !important;
+  height:100%;
+  margin:0 auto -68px;
+}
+
+footer{
+  height:68px;
+}
+
+/***** Header *****/
+header{
+  background-color:#333;
+  border-bottom:1px solid #474747;
+  height:90px;
+}
+
+#doc-logo-span{
+  width:215px;
+  height:110px;
+  display:inline-block;
+  background-image:url('../assets/doc-logo.png');
+  background-repeat:no-repeat;
+  text-indent:-99999px;
+  position:relative;
+  z-index:3;
+}
+
+#nav-column{
+  text-align:center;
+}
+
+  nav{
+    display:inline-block;
+    vertical-align:top;
+    margin:32px 0 0 0;
+  }
+
+    .nonvisible-structural-heading{
+      visibility:hidden;
+      font-size:1px;
+      margin:0;
+      padding:0;
+    }
+
+    #nav-site-menu{
+      margin:0;
+      padding:0;
+    }
+
+      .list-item-top{
+        display:inline-block;
+        padding:0 15px 35px !important;
+        margin-left:-4px;
+        overflow:visible;
+        height:30px;
+      }
+
+        .list-item-top a{
+          padding:20px 0 5px;
+          color:#fff;
+          text-decoration:none;
+          font-size:small;
+        }
+
+        #link-1:hover a{
+          border-bottom:5px solid #539342;
+        }
+
+        #link-2:hover a{
+          border-bottom:5px solid #0099D5;
+        }
+
+        #link-3:hover a{
+          border-bottom:5px solid #3e685b;
+        }
+
+        #link-4:hover a{
+          border-bottom:5px solid #9d9383;
+        }
+
+/***** Content Section *****/
+#main-content{
+  height:300px;
+}
+
+/***** Footer *****/
+footer{
+  border-top:1px solid #474747;
+  background-color:#333;
+}
+
+  footer #footer-container{
+    padding-top:20px;
+    padding-bottom:20px;
+  }
+
+    footer #footer-container ul.footer-menu{
+      display:inline-block;;
+      padding:0 50px 0 0;
+      margin:0 40px 0 0 ;
+      border-right:1px solid #4d4d4d;
+      vertical-align: top;
+    }
+
+      footer #footer-container ul.footer-menu li{
+        display:inline-block;
+        margin:5px 10px;
+        width:140px;
+        vertical-align:top;
+      }
+
+        footer #footer-container ul.footer-menu li a{
+          color:#fff;
+          font-size:90%;
+          text-decoration:none;
+          font-weight: 500;
+          font-style:normal;
+        }
+
+        footer #footer-container ul.footer-menu li ul{
+          margin:0;
+          padding:0;
+        }
+
+          footer #footer-container ul.footer-menu li ul li{
+            display:block;
+            margin:10px 0;
+          }
+
+            footer #footer-container ul.footer-menu li ul li a{
+              color:#969696;
+              font-size:75%;
+              font-family:"ClearSans",sans-serif;
+            }
+
+    footer #footer-container #social-media-links{
+      display:inline-block;
+    }
+
+      footer #footer-container #social-media-links div:first-child{
+        margin-top:0;
+      }
+
+      footer #footer-container #social-media-links div{
+        margin:10px 0;
+      }
+
+        footer #footer-container #social-media-links div a{
+          color:#fff;
+          font-size:80%;
+          text-decoration:none;
+          display:inline-block;
+          padding:5px 40px;
+          background-repeat:no-repeat;
+          background-size:20px;
+          background-position:0 4px;
+        }
+
+        footer #footer-container #social-media-links div.facebook a{
+          background-image:url("../assets/facebook.png");
+          background-size:10px;
+          background-position:5px 1px;
+        }
+
+        footer #footer-container #social-media-links div.twitter a{
+          background-image:url("../assets/twitter.png");
+        }
+
+        footer #footer-container #social-media-links div.blog a{
+          background-image:url("../assets/wordpress.png");
+        }
+
+        footer #footer-container #social-media-links div.youtube a{
+          background-image:url("../assets/youtube.png");
+          background-size:17px 19px;
+          background-position:2px;
+        }
+
+        footer #footer-container #social-media-links div.instagram a{
+          background-image:url("../assets/instapaper.png");
+          background-size:15px;
+          background-position:5px;
+        }
+
+        footer #footer-container #social-media-links div.pinterest a{
+          background-image:url("../assets/pinterest.png");
+          background-size:15px;
+          background-position:5px;
+        }
+
+        footer #footer-container #social-media-links div.flickr a{
+          background-image:url("../assets/flickr.png");
+        }
+
+    footer #footer-container hr{
+      border-bottom:1px solid #4d4d4d;
+      border-top:0;
+      margin-top:20px;
+      margin-bottom:20px;
+      border-left:none;
+      border-right:none;
+    }
+
+    a.nzgovernment{
+      display:inline-block;
+      width:170px;
+      height:23px;
+      background-image:url("../assets/nz-govt-logo.png");
+      background-repeat:no-repeat;
+      margin-left:5px;
+    }
+
+    footer #footer-container ul.other-links{
+      display:inline-block;
+      float:right;
+      list-style:none;
+      margin:0;
+      padding:0px;
+    }
+
+      footer #footer-container ul.other-links li{
+        display:inline-block;
+      }
+
+        footer #footer-container ul.other-links a{
+          font-size:75%;
+          color:#fff;
+          text-decoration:none;
+          margin:0 10px;
+        }
+
+    footer #footer-container ul.other-links.with-divider{
+      border-right:solid 1px #4d4d4d;
+      padding-right:10px;
+      margin-right:10px;
+    }
+
+footer #footer-container ul.footer-menu li a:hover,
+footer #footer-container #social-media-links div a:hover,
+footer #footer-container ul.other-links a:hover{
+  opacity:.7;
+}

@@ -1,0 +1,11 @@
+name: seedrain_dygraphs
+title: seedrain_dygraphs
+account: docnewzealand
+server: shinyapps.io
+appId: 183509
+bundleId: 845013
+url: https://docnewzealand.shinyapps.io/seedrain_dygraphs/
+when: 1496103569.89167
+asMultiple: TRUE
+asStatic: FALSE
+ignoredFiles: iframeResizer.contentWindow.min.js|ViableAndTotalSumCombined_daily.rds|shiny_ggplotly.Rmd|shiny_plotly.Rmd|seeds.rds|seeds_ab.rds|seeds_rb.rds|seeds_sb.rds|seeds_bb.rds|seeds_hb.rds|seeds_mb.rds|Tabbed_shiny.Rmd

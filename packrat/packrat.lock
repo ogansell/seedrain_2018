@@ -1,0 +1,116 @@
+PackratFormat: 1.4
+PackratVersion: 0.4.8.1
+RVersion: 3.3.1
+Repos: CRAN=https://cran.rstudio.com/,
+    CRANextra=http://www.stats.ox.ac.uk/pub/RWin
+
+Package: BH
+Source: CRAN
+Version: 1.66.0-1
+Hash: 4cc8883584b955ed01f38f68bc03af6d
+
+Package: R6
+Source: CRAN
+Version: 2.2.2
+Hash: b2366cd9d2f3851a5704b4e192b985c2
+
+Package: Rcpp
+Source: CRAN
+Version: 0.12.16
+Hash: 8cc9dc88c11acdcf8a6dec4a0f1500bc
+
+Package: crayon
+Source: CRAN
+Version: 1.3.4
+Hash: ff2840dd9b0d563fc80377a5a45510cd
+
+Package: digest
+Source: CRAN
+Version: 0.6.14
+Hash: 8017201df840795327c67825e98b52c1
+
+Package: htmltools
+Source: CRAN
+Version: 0.3.6
+Hash: 358f767a496785afb8426c3abc8b6471
+Requires: Rcpp, digest
+
+Package: httpuv
+Source: github
+Version: 1.3.6.9007
+Hash: 8798b9ff11177d7b0ed1d4843637a6c5
+Requires: BH, Rcpp, later, promises
+GithubRepo: httpuv
+GithubUsername: rstudio
+GithubRef: master
+GithubSha1: 3861ebc46df9df3d82c2562d4d253123f57502d6
+
+Package: jsonlite
+Source: CRAN
+Version: 1.5
+Hash: 9c51936d8dd00b2f1d4fe9d10499694c
+
+Package: later
+Source: github
+Version: 0.7.1
+Hash: be2a7c7a119330d2cbfda79a102777cb
+Requires: BH, Rcpp, rlang
+GithubRepo: later
+GithubUsername: r-lib
+GithubRef: master
+GithubSha1: 3907767992d8069eef907f9bc83c82bab984441d
+
+Package: magrittr
+Source: CRAN
+Version: 1.5
+Hash: bdc4d48c3135e8f3b399536ddf160df4
+
+Package: mime
+Source: CRAN
+Version: 0.5
+Hash: 463550cf44fb6f0a2359368f42eebe62
+
+Package: packrat
+Source: CRAN
+Version: 0.4.8-1
+Hash: 6ad605ba7b4b476d84be6632393f5765
+
+Package: promises
+Source: github
+Version: 1.0.1
+Hash: 56988eed627f789d62bf45ff4d1164aa
+Requires: R6, Rcpp, later, magrittr, rlang
+GithubRepo: promises
+GithubUsername: rstudio
+GithubRef: master
+GithubSha1: afe9e8f84d9903fb4cc0bae5119300e8b3359b80
+
+Package: rlang
+Source: github
+Version: 0.2.0.9001
+Hash: 478e5798690730412a6c104a99faf815
+GithubRepo: rlang
+GithubUsername: tidyverse
+GithubRef: master
+GithubSha1: 82b27278d743387c6d0dabc91d878d4af64a9d00
+
+Package: shiny
+Source: github
+Version: 1.0.5.9000
+Hash: c63862156168952aebaea5a3d71abe91
+Requires: R6, crayon, digest, htmltools, httpuv, jsonlite, later, mime,
+    promises, sourcetools, xtable
+GithubRepo: shiny
+GithubUsername: rstudio
+GithubRef: master
+GithubSha1: b7b696630fe6b655061fc1ca5a71d570c25269bb
+
+Package: sourcetools
+Source: CRAN
+Version: 0.1.6
+Hash: 226d56d7469587da40b0f96180e711b4
+
+Package: xtable
+Source: CRAN
+Version: 1.8-2
+Hash: 7293235cfcc14cdff1ce7fd1a0212031
